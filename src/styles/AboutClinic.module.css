@@ -1,0 +1,293 @@
+.section {
+  position: relative;
+  overflow: hidden;
+  padding: 108px 24px;
+  background:
+    radial-gradient(circle at 0% 10%, rgba(20, 184, 166, 0.08), transparent 25%),
+    radial-gradient(circle at 100% 90%, rgba(14, 165, 233, 0.07), transparent 26%),
+    #ffffff;
+}
+
+.container {
+  display: grid;
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 64px;
+  align-items: center;
+}
+
+.visualColumn {
+  position: relative;
+}
+
+.imageFrame {
+  position: relative;
+  min-height: 610px;
+  padding: 22px;
+  border: 1px solid rgba(13, 148, 136, 0.14);
+  border-radius: 34px;
+  background:
+    linear-gradient(145deg, rgba(240, 253, 250, 0.96), rgba(236, 254, 255, 0.9));
+  box-shadow: 0 30px 75px rgba(15, 23, 42, 0.1);
+}
+
+.imagePlaceholder {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 566px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 14px;
+  border: 1px dashed rgba(13, 148, 136, 0.3);
+  border-radius: 26px;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.22)),
+    linear-gradient(135deg, #dff8f4, #eaf9fc);
+  color: #0f766e;
+}
+
+.imagePlaceholder svg {
+  font-size: 4.5rem;
+  opacity: 0.86;
+}
+
+.imagePlaceholder span {
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.experienceCard,
+.trustCard {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 230px;
+  padding: 17px 18px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(12px);
+}
+
+.experienceCard {
+  top: 56px;
+  right: -28px;
+}
+
+.trustCard {
+  left: -28px;
+  bottom: 54px;
+}
+
+.experienceCard > svg,
+.trustCard > svg {
+  flex-shrink: 0;
+  color: #0f766e;
+  font-size: 1.45rem;
+}
+
+.experienceCard strong,
+.trustCard strong {
+  display: block;
+  color: #17384d;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.experienceCard span,
+.trustCard span {
+  display: block;
+  margin-top: 4px;
+  color: #718392;
+  font-size: 0.72rem;
+}
+
+.contentColumn {
+  min-width: 0;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 20px;
+  padding: 8px 14px;
+  border: 1px solid rgba(13, 148, 136, 0.16);
+  border-radius: 999px;
+  background: rgba(240, 253, 250, 0.9);
+  color: #0f766e;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.contentColumn h2 {
+  max-width: 700px;
+  margin: 0;
+  color: #102a43;
+  font-size: clamp(2.15rem, 4.2vw, 3.75rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+}
+
+.contentColumn h2 span {
+  background: linear-gradient(135deg, #0f766e, #0891b2);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.lead {
+  margin: 24px 0 0;
+  color: #5f7486;
+  font-size: 1.01rem;
+  line-height: 1.82;
+}
+
+.bodyText {
+  margin: 15px 0 0;
+  color: #708291;
+  font-size: 0.94rem;
+  line-height: 1.75;
+}
+
+.checkList {
+  display: grid;
+  margin-top: 28px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px 18px;
+}
+
+.checkItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #385466;
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.checkItem svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: #0f9488;
+}
+
+.expertiseGrid {
+  display: grid;
+  margin-top: 34px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.expertiseCard {
+  display: flex;
+  gap: 14px;
+  padding: 19px;
+  border: 1px solid rgba(148, 163, 184, 0.17);
+  border-radius: 20px;
+  background: rgba(248, 252, 252, 0.82);
+  transition:
+    transform 200ms ease,
+    border-color 200ms ease,
+    background 200ms ease;
+}
+
+.expertiseCard:hover {
+  transform: translateY(-4px);
+  border-color: rgba(13, 148, 136, 0.22);
+  background: #ffffff;
+}
+
+.iconBox {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  place-items: center;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #dffbf5, #e5f9fc);
+  color: #0f766e;
+  font-size: 1.02rem;
+}
+
+.expertiseCard h3 {
+  margin: 1px 0 6px;
+  color: #17384d;
+  font-size: 0.89rem;
+  font-weight: 800;
+}
+
+.expertiseCard p {
+  margin: 0;
+  color: #718392;
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+
+@media (max-width: 1080px) {
+  .container {
+    grid-template-columns: 1fr;
+    gap: 50px;
+  }
+
+  .visualColumn {
+    width: min(720px, 100%);
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 700px) {
+  .section {
+    padding: 76px 16px;
+  }
+
+  .imageFrame {
+    min-height: 460px;
+    padding: 15px;
+    border-radius: 26px;
+  }
+
+  .imagePlaceholder {
+    min-height: 430px;
+    border-radius: 20px;
+  }
+
+  .experienceCard,
+  .trustCard {
+    position: static;
+    min-width: 0;
+    margin-top: 12px;
+  }
+
+  .checkList,
+  .expertiseGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 420px) {
+  .imagePlaceholder svg {
+    font-size: 3.4rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .expertiseCard {
+    transition: none;
+  }
+
+  .expertiseCard:hover {
+    transform: none;
+  }
+}

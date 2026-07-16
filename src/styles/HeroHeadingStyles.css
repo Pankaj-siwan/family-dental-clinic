@@ -1,0 +1,5 @@
+.badge{display:inline-flex;padding:.55rem 1rem;border-radius:999px;background:#ecfdf5;color:#0f766e;font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:1.5rem}
+.heroTitle{display:flex;flex-direction:column;line-height:.95;font-size:clamp(3.5rem,7vw,6.2rem);font-weight:900;letter-spacing:-.05em;margin:0}
+.dark{color:#0F2D52}.accent{color:#0F9D94}
+.heroSubtitle{margin-top:1.8rem;max-width:650px;font-size:1.15rem;line-height:1.8;color:#64748b;font-weight:500}
+@media(max-width:768px){.heroTitle{font-size:clamp(2.8rem,11vw,4.2rem)}.heroSubtitle{font-size:1rem}}

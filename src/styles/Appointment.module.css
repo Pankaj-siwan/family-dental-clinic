@@ -1,0 +1,186 @@
+.section {
+  padding: 106px 24px;
+  background: #ffffff;
+}
+
+.container {
+  display: grid;
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  grid-template-columns: minmax(0, 1.15fr) minmax(330px, 0.65fr);
+  gap: 56px;
+  align-items: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 19px;
+  padding: 8px 14px;
+  border: 1px solid rgba(13, 148, 136, 0.16);
+  border-radius: 999px;
+  background: rgba(240, 253, 250, 0.9);
+  color: #0f766e;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.content h2 {
+  max-width: 760px;
+  margin: 0;
+  color: #102a43;
+  font-size: clamp(2.15rem, 4.3vw, 3.75rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+}
+
+.content h2 span {
+  background: linear-gradient(135deg, #0f766e, #0891b2);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.content > p {
+  max-width: 730px;
+  margin: 22px 0 0;
+  color: #64798a;
+  font-size: 1rem;
+  line-height: 1.78;
+}
+
+.details {
+  display: grid;
+  margin-top: 34px;
+  gap: 15px;
+}
+
+.detail {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.detail > svg {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  padding: 12px;
+  border-radius: 13px;
+  background: #e8faf6;
+  color: #0f766e;
+}
+
+.detail span,
+.detail a,
+.detail strong {
+  display: block;
+}
+
+.detail span {
+  margin-bottom: 4px;
+  color: #84939e;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.detail a,
+.detail strong {
+  color: #254457;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.actionCard {
+  padding: 34px;
+  border: 1px solid rgba(13, 148, 136, 0.16);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.65), transparent 30%),
+    linear-gradient(145deg, #e6fbf7, #e8f8fc);
+  box-shadow: 0 28px 70px rgba(15, 118, 110, 0.13);
+}
+
+.cardIcon {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  place-items: center;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #0f766e, #0891b2);
+  color: #ffffff;
+  font-size: 1.7rem;
+  box-shadow: 0 14px 28px rgba(15, 118, 110, 0.22);
+}
+
+.actionCard h3 {
+  margin: 24px 0 11px;
+  color: #17384d;
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.actionCard p {
+  margin: 0 0 24px;
+  color: #64798a;
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
+
+.whatsappButton,
+.callButton {
+  display: flex;
+  min-height: 50px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 14px;
+  font-size: 0.86rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.whatsappButton {
+  background: #128c7e;
+  color: #ffffff;
+  box-shadow: 0 12px 25px rgba(18, 140, 126, 0.22);
+}
+
+.callButton {
+  margin-top: 11px;
+  border: 1px solid rgba(15, 118, 110, 0.18);
+  background: rgba(255, 255, 255, 0.74);
+  color: #0f766e;
+}
+
+.actionCard small {
+  display: block;
+  margin-top: 17px;
+  color: #718592;
+  font-size: 0.68rem;
+  line-height: 1.55;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 650px) {
+  .section {
+    padding: 76px 16px;
+  }
+
+  .actionCard {
+    padding: 26px 22px;
+  }
+}

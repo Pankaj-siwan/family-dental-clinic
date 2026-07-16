@@ -1,0 +1,229 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 5px 24px rgba(23, 51, 74, 0.08);
+  backdrop-filter: blur(16px);
+}
+
+.brandRow {
+  border-bottom: 1px solid #e9eff5;
+}
+
+.brandContainer {
+  width: min(1320px, calc(100% - 40px));
+  min-height: 128px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  align-items: center;
+  gap: 28px;
+}
+
+.logo {
+  width: 102px;
+  height: 102px;
+  object-fit: contain;
+}
+
+.brandText h1 {
+  margin: 0;
+  color: #0f315f;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(34px, 4vw, 58px);
+  font-weight: 750;
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+}
+
+.brandText h1 span {
+  display: block;
+  margin-top: 7px;
+  color: #c2187a;
+  text-align: center;
+}
+
+.contactActions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.callCard,
+.whatsappCard {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px;
+  border-radius: 15px;
+  text-decoration: none;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.callCard {
+  color: #364b5c;
+  background: #ffffff;
+  border: 1px solid #e4ebf1;
+  box-shadow: 0 9px 24px rgba(23, 51, 74, 0.09);
+}
+
+.whatsappCard {
+  color: white;
+  background: #20c965;
+  box-shadow: 0 12px 28px rgba(32, 201, 101, 0.25);
+}
+
+.callCard:hover,
+.whatsappCard:hover {
+  transform: translateY(-3px);
+}
+
+.callCard svg,
+.whatsappCard svg {
+  font-size: 27px;
+}
+
+.callCard span,
+.callCard strong,
+.whatsappCard span,
+.whatsappCard strong {
+  display: block;
+}
+
+.callCard span,
+.whatsappCard span {
+  font-size: 13px;
+}
+
+.callCard strong,
+.whatsappCard strong {
+  margin-top: 2px;
+  font-size: 14px;
+}
+
+.navigationRow {
+  background: #ffffff;
+}
+
+.navigation {
+  width: min(940px, calc(100% - 30px));
+  min-height: 58px;
+  margin: 0 auto;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 22px;
+}
+
+.navigation a {
+  position: relative;
+  min-width: 108px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 10px;
+  color: #2b2f33;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 700;
+  transition:
+    color 180ms ease,
+    background 180ms ease;
+}
+
+.navigation a:hover {
+  color: #0b65b1;
+  background: #f7fbff;
+}
+
+.navigation .activeLink {
+  color: #0b65b1;
+}
+
+.navigation .activeLink::after {
+  content: "";
+  position: absolute;
+  right: 10px;
+  bottom: 0;
+  left: 10px;
+  height: 4px;
+  background: #126bd0;
+  border-radius: 4px 4px 0 0;
+}
+
+.navigation .appointmentLink {
+  min-width: 170px;
+  margin: 8px 0;
+  color: #ffffff;
+  background: linear-gradient(135deg, #087cac, #0f5c9d);
+  border-radius: 10px;
+}
+
+.navigation .appointmentLink:hover {
+  color: white;
+  background: linear-gradient(135deg, #076d99, #0c4c82);
+}
+
+@media (max-width: 1050px) {
+  .brandContainer {
+    grid-template-columns: 90px 1fr;
+    padding: 18px 0;
+  }
+
+  .logo {
+    width: 84px;
+    height: 84px;
+  }
+
+  .contactActions {
+    grid-column: 1 / -1;
+    justify-content: center;
+  }
+
+  .navigation {
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 650px) {
+  .brandContainer {
+    width: calc(100% - 24px);
+    grid-template-columns: 68px 1fr;
+    gap: 10px;
+  }
+
+  .logo {
+    width: 64px;
+    height: 64px;
+  }
+
+  .brandText h1 {
+    font-size: 27px;
+  }
+
+  .contactActions {
+    width: 100%;
+  }
+
+  .callCard,
+  .whatsappCard {
+    flex: 1;
+    justify-content: center;
+    padding: 9px 10px;
+  }
+
+  .navigation {
+    width: 100%;
+    padding: 0 8px;
+  }
+
+  .navigation a {
+    min-width: 100px;
+  }
+}

@@ -1,0 +1,240 @@
+.section {
+  position: relative;
+  overflow: hidden;
+  padding: 106px 24px;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(14, 165, 233, 0.08), transparent 26%),
+    radial-gradient(circle at 8% 90%, rgba(20, 184, 166, 0.08), transparent 24%),
+    linear-gradient(180deg, #f8fcfc 0%, #ffffff 100%);
+}
+
+.container {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+
+.headingArea {
+  max-width: 800px;
+  margin-bottom: 44px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 18px;
+  padding: 8px 14px;
+  border: 1px solid rgba(13, 148, 136, 0.16);
+  border-radius: 999px;
+  background: rgba(240, 253, 250, 0.9);
+  color: #0f766e;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.headingArea h2 {
+  margin: 0;
+  color: #102a43;
+  font-size: clamp(2.1rem, 4.3vw, 3.7rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+}
+
+.headingArea h2 span {
+  background: linear-gradient(135deg, #0f766e, #0891b2);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.headingArea p {
+  max-width: 720px;
+  margin: 20px 0 0;
+  color: #667b8b;
+  font-size: 0.96rem;
+  line-height: 1.75;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.32fr) minmax(330px, 0.68fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.mapCard {
+  overflow: hidden;
+  padding: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 28px;
+  background: #ffffff;
+  box-shadow: 0 22px 60px rgba(15, 23, 42, 0.08);
+}
+
+.map {
+  display: block;
+  width: 100%;
+  height: 500px;
+  border: 0;
+  border-radius: 20px;
+}
+
+.mapActions {
+  display: flex;
+  gap: 12px;
+  padding-top: 14px;
+}
+
+.directionsButton,
+.callButton,
+.mobileDirections {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 18px;
+  border-radius: 14px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.directionsButton {
+  flex: 1;
+  background: linear-gradient(135deg, #0f766e, #0891b2);
+  color: #ffffff;
+  box-shadow: 0 12px 25px rgba(15, 118, 110, 0.2);
+}
+
+.callButton {
+  border: 1px solid rgba(15, 118, 110, 0.18);
+  background: #f3fbfa;
+  color: #0f766e;
+}
+
+.infoPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  padding: 25px;
+  border: 1px solid rgba(13, 148, 136, 0.14);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.6), transparent 30%),
+    linear-gradient(145deg, #e9faf7, #eaf7fb);
+  box-shadow: 0 22px 58px rgba(15, 118, 110, 0.1);
+}
+
+.clinicName {
+  padding: 6px 4px 12px;
+}
+
+.clinicName span,
+.clinicName strong {
+  display: block;
+}
+
+.clinicName span {
+  color: #17384d;
+  font-size: 1.12rem;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.clinicName strong {
+  margin-top: 6px;
+  color: #0f766e;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.infoCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.infoCard > svg {
+  width: 43px;
+  height: 43px;
+  flex: 0 0 43px;
+  padding: 12px;
+  border-radius: 14px;
+  background: #e2f8f3;
+  color: #0f766e;
+}
+
+.infoCard span,
+.infoCard strong,
+.infoCard a {
+  display: block;
+}
+
+.infoCard span {
+  margin-bottom: 5px;
+  color: #83939e;
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.infoCard strong,
+.infoCard a {
+  color: #29495b;
+  font-size: 0.83rem;
+  font-weight: 800;
+  line-height: 1.55;
+  text-decoration: none;
+}
+
+.mobileDirections {
+  margin-top: auto;
+  background: #ffffff;
+  color: #0f766e;
+  box-shadow: 0 12px 25px rgba(15, 118, 110, 0.08);
+}
+
+@media (max-width: 920px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .map {
+    height: 450px;
+  }
+}
+
+@media (max-width: 650px) {
+  .section {
+    padding: 76px 16px;
+  }
+
+  .mapCard {
+    padding: 10px;
+    border-radius: 22px;
+  }
+
+  .map {
+    height: 360px;
+    border-radius: 16px;
+  }
+
+  .mapActions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .infoPanel {
+    padding: 21px;
+    border-radius: 22px;
+  }
+}

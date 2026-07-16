@@ -1,0 +1,150 @@
+.footer {
+  padding: 72px 24px 24px;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(20, 184, 166, 0.14), transparent 24%),
+    #0d2938;
+  color: #ffffff;
+}
+
+.container {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+
+.mainGrid {
+  display: grid;
+  grid-template-columns: 1.4fr 0.7fr 0.9fr 1fr;
+  gap: 46px;
+  padding-bottom: 50px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brandIcon {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #14b8a6, #0891b2);
+  font-size: 1.35rem;
+}
+
+.brand strong,
+.brand span {
+  display: block;
+}
+
+.brand strong {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.brand div > span {
+  margin-top: 3px;
+  color: #9bded8;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.brandColumn > p {
+  max-width: 360px;
+  margin: 20px 0 0;
+  color: #b9c8d1;
+  font-size: 0.84rem;
+  line-height: 1.75;
+}
+
+.socials {
+  display: flex;
+  gap: 10px;
+  margin-top: 23px;
+}
+
+.socials a {
+  display: grid;
+  width: 39px;
+  height: 39px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.linkColumn h3,
+.contactColumn h3 {
+  margin: 0 0 20px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.linkColumn a,
+.linkColumn span {
+  display: block;
+  margin-top: 11px;
+  color: #b9c8d1;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.contactColumn a {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 12px;
+  color: #c7d6dd;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.contactColumn a svg {
+  color: #5eead4;
+}
+
+.contactColumn p {
+  margin: 18px 0 0;
+  color: #aebfc8;
+  font-size: 0.78rem;
+  line-height: 1.65;
+}
+
+.bottomBar {
+  display: flex;
+  justify-content: space-between;
+  gap: 25px;
+  padding-top: 23px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: #8fa3ae;
+  font-size: 0.67rem;
+  line-height: 1.55;
+}
+
+@media (max-width: 900px) {
+  .mainGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .footer {
+    padding: 58px 16px 22px;
+  }
+
+  .mainGrid {
+    grid-template-columns: 1fr;
+    gap: 34px;
+  }
+
+  .bottomBar {
+    flex-direction: column;
+  }
+}
