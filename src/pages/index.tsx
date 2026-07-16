@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import Clinics from "@/components/Clinics";
 import CaseHighlights from "@/components/CaseHighlights";
 import Facilities from "@/components/Facilities";
 import PatientJourney from "@/components/PatientJourney";
@@ -15,9 +16,9 @@ export default function Home() {
   return (
     <>
       <Navbar />
-
       <main>
         <Hero />
+        <Clinics />
         <CaseHighlights />
         <Facilities />
         <PatientJourney />
@@ -27,7 +28,6 @@ export default function Home() {
         <Appointment />
         <ContactSection />
       </main>
-
       <Footer />
       <FloatingActions />
     </>
