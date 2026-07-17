@@ -190,3 +190,5 @@
     transform: none;
   }
 }
+.hindiTitle{display:block;margin-top:5px;color:#0f766e;font-size:.83em;font-weight:800}
+.hindiDescription{margin-top:7px!important;color:#0f766e!important;font-weight:700}
