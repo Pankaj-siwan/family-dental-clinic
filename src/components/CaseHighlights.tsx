@@ -1,33 +1,30 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
   FaArrowRight,
   FaCamera,
   FaCheckCircle,
+  FaEdit,
   FaImages,
   FaInfoCircle,
   FaPlus,
+  FaSave,
   FaTimes,
-  FaTooth,
   FaTrash,
   FaUpload,
 } from "react-icons/fa";
 import styles from "@/styles/CaseHighlights.module.css";
 
-type CaseCategory =
-  | "All"
-  | "Root Canal"
-  | "Restoration"
-  | "Crowns"
-  | "Oral Surgery"
-  | "Implants";
-
-type StoredCategory = Exclude<CaseCategory, "All">;
-
 type ClinicalCase = {
   id: number;
-  category: StoredCategory;
+  category: string;
   title: string;
   tooth: string;
   complaint: string;
@@ -37,21 +34,12 @@ type ClinicalCase = {
   visits: string;
   beforeImage?: string;
   afterImage?: string;
-  userAdded?: boolean;
 };
 
-type CaseForm = Omit<ClinicalCase, "id" | "userAdded">;
+type CaseForm = Omit<ClinicalCase, "id">;
 
-const STORAGE_KEY = "family-dental-clinical-cases-v1";
-
-const categories: CaseCategory[] = [
-  "All",
-  "Root Canal",
-  "Restoration",
-  "Crowns",
-  "Oral Surgery",
-  "Implants",
-];
+const STORAGE_KEY = "family-dental-clinical-cases-v2";
+const OLD_STORAGE_KEY = "family-dental-clinical-cases-v1";
 
 const initialCases: ClinicalCase[] = [
   {
@@ -79,7 +67,7 @@ const initialCases: ClinicalCase[] = [
 ];
 
 const emptyForm: CaseForm = {
-  category: "Root Canal",
+  category: "",
   title: "",
   tooth: "",
   complaint: "",
@@ -94,53 +82,82 @@ const emptyForm: CaseForm = {
 function readImage(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     if (!file.type.startsWith("image/")) {
-      reject(new Error("Please select an image file."));
+      reject(new Error("Please select a valid image file."));
       return;
     }
 
     if (file.size > 4 * 1024 * 1024) {
-      reject(new Error("Image must be smaller than 4 MB."));
+      reject(new Error("Each image must be smaller than 4 MB."));
       return;
     }
 
     const reader = new FileReader();
     reader.onload = () => resolve(String(reader.result));
-    reader.onerror = () => reject(new Error("Unable to read the selected image."));
+    reader.onerror = () =>
+      reject(new Error("Unable to read the selected image."));
     reader.readAsDataURL(file);
   });
 }
 
 export default function CaseHighlights() {
-  const [activeCategory, setActiveCategory] = useState<CaseCategory>("All");
+  const [activeCategory, setActiveCategory] = useState("All");
   const [selectedCase, setSelectedCase] = useState<ClinicalCase | null>(null);
   const [cases, setCases] = useState<ClinicalCase[]>(initialCases);
   const [showUploader, setShowUploader] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<CaseForm>(emptyForm);
   const [formError, setFormError] = useState("");
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const uploadedCases = JSON.parse(stored) as ClinicalCase[];
-        setCases([...initialCases, ...uploadedCases]);
+      const savedCases = localStorage.getItem(STORAGE_KEY);
+
+      if (savedCases) {
+        setCases(JSON.parse(savedCases) as ClinicalCase[]);
+        return;
+      }
+
+      const oldUploadedCases = localStorage.getItem(OLD_STORAGE_KEY);
+
+      if (oldUploadedCases) {
+        const migratedCases = [
+          ...initialCases,
+          ...(JSON.parse(oldUploadedCases) as ClinicalCase[]),
+        ];
+        setCases(migratedCases);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(migratedCases));
       }
     } catch {
-      // Ignore invalid local data and keep the built-in sample cases.
+      setCases(initialCases);
     }
   }, []);
+
+  const categories = useMemo(() => {
+    const uniqueCategories = Array.from(
+      new Set(
+        cases
+          .map((item) => item.category.trim())
+          .filter((category) => category.length > 0),
+      ),
+    );
+
+    return ["All", ...uniqueCategories.sort((a, b) => a.localeCompare(b))];
+  }, [cases]);
 
   const visibleCases = useMemo(() => {
     if (activeCategory === "All") return cases;
     return cases.filter((item) => item.category === activeCategory);
   }, [activeCategory, cases]);
 
-  const saveUploadedCases = (nextCases: ClinicalCase[]) => {
-    const uploadedOnly = nextCases.filter((item) => item.userAdded);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(uploadedOnly));
+  const saveCases = (nextCases: ClinicalCase[]) => {
+    setCases(nextCases);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(nextCases));
   };
 
-  const updateField = <K extends keyof CaseForm>(key: K, value: CaseForm[K]) => {
+  const updateField = <K extends keyof CaseForm>(
+    key: K,
+    value: CaseForm[K],
+  ) => {
     setForm((current) => ({ ...current, [key]: value }));
   };
 
@@ -154,9 +171,45 @@ export default function CaseHighlights() {
     try {
       setFormError("");
       updateField(key, await readImage(file));
+      event.target.value = "";
     } catch (error) {
-      setFormError(error instanceof Error ? error.message : "Image upload failed.");
+      setFormError(
+        error instanceof Error ? error.message : "Image upload failed.",
+      );
     }
+  };
+
+  const openNewCase = () => {
+    setEditingId(null);
+    setForm(emptyForm);
+    setFormError("");
+    setShowUploader(true);
+  };
+
+  const openEditCase = (clinicalCase: ClinicalCase) => {
+    setEditingId(clinicalCase.id);
+    setForm({
+      category: clinicalCase.category,
+      title: clinicalCase.title,
+      tooth: clinicalCase.tooth,
+      complaint: clinicalCase.complaint,
+      diagnosis: clinicalCase.diagnosis,
+      treatment: clinicalCase.treatment,
+      outcome: clinicalCase.outcome,
+      visits: clinicalCase.visits,
+      beforeImage: clinicalCase.beforeImage ?? "",
+      afterImage: clinicalCase.afterImage ?? "",
+    });
+    setFormError("");
+    setSelectedCase(null);
+    setShowUploader(true);
+  };
+
+  const closeUploader = () => {
+    setShowUploader(false);
+    setEditingId(null);
+    setForm(emptyForm);
+    setFormError("");
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -164,42 +217,68 @@ export default function CaseHighlights() {
     setFormError("");
 
     if (
+      !form.category.trim() ||
       !form.title.trim() ||
       !form.complaint.trim() ||
       !form.diagnosis.trim() ||
       !form.treatment.trim() ||
       !form.outcome.trim()
     ) {
-      setFormError("Please complete all required case details.");
+      setFormError(
+        "Please complete category, case title, concern, diagnosis, treatment and outcome.",
+      );
       return;
     }
 
-    if (!form.beforeImage || !form.afterImage) {
-      setFormError("Please upload both before and after photographs.");
+    if (!form.beforeImage && !form.afterImage) {
+      setFormError("Please upload at least one clinical photograph.");
       return;
     }
 
-    const newCase: ClinicalCase = {
+    const normalizedForm: CaseForm = {
       ...form,
-      id: Date.now(),
-      userAdded: true,
+      category: form.category.trim(),
+      title: form.title.trim(),
+      tooth: form.tooth.trim(),
+      complaint: form.complaint.trim(),
+      diagnosis: form.diagnosis.trim(),
+      treatment: form.treatment.trim(),
+      outcome: form.outcome.trim(),
+      visits: form.visits.trim(),
     };
 
-    const nextCases = [newCase, ...cases];
-    setCases(nextCases);
-    saveUploadedCases(nextCases);
-    setForm(emptyForm);
-    setShowUploader(false);
+    if (editingId !== null) {
+      const nextCases = cases.map((item) =>
+        item.id === editingId ? { ...normalizedForm, id: editingId } : item,
+      );
+      saveCases(nextCases);
+    } else {
+      saveCases([{ ...normalizedForm, id: Date.now() }, ...cases]);
+    }
+
     setActiveCategory("All");
+    closeUploader();
   };
 
   const deleteCase = (id: number) => {
-    const nextCases = cases.filter((item) => item.id !== id);
-    setCases(nextCases);
-    saveUploadedCases(nextCases);
+    const caseToDelete = cases.find((item) => item.id === id);
 
-    if (selectedCase?.id === id) {
-      setSelectedCase(null);
+    if (
+      !caseToDelete ||
+      !window.confirm(`Delete "${caseToDelete.title}" permanently?`)
+    ) {
+      return;
+    }
+
+    const nextCases = cases.filter((item) => item.id !== id);
+    saveCases(nextCases);
+
+    if (selectedCase?.id === id) setSelectedCase(null);
+    if (
+      activeCategory !== "All" &&
+      !nextCases.some((item) => item.category === activeCategory)
+    ) {
+      setActiveCategory("All");
     }
   };
 
@@ -218,14 +297,14 @@ export default function CaseHighlights() {
           </h2>
 
           <p>
-            Present de-identified clinical cases with patient consent. Uploaded
-            cases are saved in this browser on this device.
+            Add any case category and case title in your own words. Cases and
+            photographs can be edited or deleted later from this browser.
           </p>
 
           <button
             type="button"
             className={styles.addCaseButton}
-            onClick={() => setShowUploader(true)}
+            onClick={openNewCase}
           >
             <FaPlus />
             Upload New Case
@@ -247,131 +326,159 @@ export default function CaseHighlights() {
           ))}
         </div>
 
-        <div className={styles.grid}>
-          {visibleCases.map((clinicalCase) => (
-            <article className={styles.card} key={clinicalCase.id}>
-              {clinicalCase.userAdded && (
-                <button
-                  type="button"
-                  className={styles.deleteButton}
-                  onClick={() => deleteCase(clinicalCase.id)}
-                  aria-label={`Delete ${clinicalCase.title}`}
-                >
-                  <FaTrash />
-                </button>
-              )}
+        {visibleCases.length === 0 ? (
+          <div className={styles.emptyState}>
+            <FaImages />
+            <h3>No cases in this category</h3>
+            <p>Add a new clinical case or select another category.</p>
+          </div>
+        ) : (
+          <div className={styles.grid}>
+            {visibleCases.map((clinicalCase) => (
+              <article className={styles.card} key={clinicalCase.id}>
+                <div className={styles.cardActions}>
+                  <button
+                    type="button"
+                    className={styles.editButton}
+                    onClick={() => openEditCase(clinicalCase)}
+                    aria-label={`Edit ${clinicalCase.title}`}
+                    title="Edit case"
+                  >
+                    <FaEdit />
+                  </button>
 
-              <div className={styles.comparison}>
-                <div className={styles.imagePanel}>
-                  <span>Before</span>
-                  {clinicalCase.beforeImage ? (
-                    <img
-                      src={clinicalCase.beforeImage}
-                      alt={`Before treatment - ${clinicalCase.title}`}
-                      className={styles.caseImage}
-                    />
-                  ) : (
-                    <div className={styles.placeholder}>
-                      <FaTooth />
-                      <small>Add clinical photo</small>
-                    </div>
-                  )}
+                  <button
+                    type="button"
+                    className={styles.deleteButton}
+                    onClick={() => deleteCase(clinicalCase.id)}
+                    aria-label={`Delete ${clinicalCase.title}`}
+                    title="Delete case"
+                  >
+                    <FaTrash />
+                  </button>
                 </div>
 
-                <div className={styles.imagePanel}>
-                  <span>After</span>
-                  {clinicalCase.afterImage ? (
-                    <img
-                      src={clinicalCase.afterImage}
-                      alt={`After treatment - ${clinicalCase.title}`}
-                      className={styles.caseImage}
-                    />
-                  ) : (
-                    <div className={styles.placeholder}>
-                      <FaCheckCircle />
-                      <small>Add outcome photo</small>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className={styles.cardBody}>
-                <div className={styles.categoryRow}>
-                  <span>{clinicalCase.category}</span>
-                  <small>{clinicalCase.tooth}</small>
-                </div>
-
-                <h3>{clinicalCase.title}</h3>
-
-                <dl className={styles.summary}>
-                  <div>
-                    <dt>Concern</dt>
-                    <dd>{clinicalCase.complaint}</dd>
+                <div className={styles.comparison}>
+                  <div className={styles.imagePanel}>
+                    <span>Before</span>
+                    {clinicalCase.beforeImage ? (
+                      <img
+                        src={clinicalCase.beforeImage}
+                        alt={`Before treatment - ${clinicalCase.title}`}
+                        className={styles.caseImage}
+                      />
+                    ) : (
+                      <div className={styles.placeholder}>
+                        <FaCamera />
+                        <small>No before photo</small>
+                      </div>
+                    )}
                   </div>
-                  <div>
-                    <dt>Treatment</dt>
-                    <dd>{clinicalCase.treatment}</dd>
-                  </div>
-                </dl>
 
-                <button
-                  type="button"
-                  className={styles.viewButton}
-                  onClick={() => setSelectedCase(clinicalCase)}
-                >
-                  View full case
-                  <FaArrowRight />
-                </button>
-              </div>
-            </article>
-          ))}
-        </div>
+                  <div className={styles.imagePanel}>
+                    <span>After</span>
+                    {clinicalCase.afterImage ? (
+                      <img
+                        src={clinicalCase.afterImage}
+                        alt={`After treatment - ${clinicalCase.title}`}
+                        className={styles.caseImage}
+                      />
+                    ) : (
+                      <div className={styles.placeholder}>
+                        <FaCheckCircle />
+                        <small>No after photo</small>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className={styles.cardBody}>
+                  <div className={styles.categoryRow}>
+                    <span>{clinicalCase.category}</span>
+                    <small>{clinicalCase.tooth || "Region not specified"}</small>
+                  </div>
+
+                  <h3>{clinicalCase.title}</h3>
+
+                  <dl className={styles.summary}>
+                    <div>
+                      <dt>Concern</dt>
+                      <dd>{clinicalCase.complaint}</dd>
+                    </div>
+                    <div>
+                      <dt>Treatment</dt>
+                      <dd>{clinicalCase.treatment}</dd>
+                    </div>
+                  </dl>
+
+                  <button
+                    type="button"
+                    className={styles.viewButton}
+                    onClick={() => setSelectedCase(clinicalCase)}
+                  >
+                    View full case
+                    <FaArrowRight />
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
 
         <div className={styles.disclaimer}>
           <FaInfoCircle />
           <p>
             Clinical outcomes vary between patients. Publish photographs and
-            clinical details only after written consent and removal of identifying
-            information.
+            clinical details only after written consent and removal of
+            identifying information.
           </p>
         </div>
       </div>
 
       {showUploader && (
-        <div className={styles.modalBackdrop} role="presentation">
+        <div
+          className={styles.modalBackdrop}
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.currentTarget === event.target) closeUploader();
+          }}
+        >
           <form className={styles.uploadModal} onSubmit={handleSubmit}>
             <button
               type="button"
               className={styles.closeButton}
-              onClick={() => {
-                setShowUploader(false);
-                setFormError("");
-              }}
-              aria-label="Close case uploader"
+              onClick={closeUploader}
+              aria-label="Close case editor"
             >
               <FaTimes />
             </button>
 
-            <span className={styles.modalCategory}>Add clinical case</span>
-            <h3>Upload a new case</h3>
+            <span className={styles.modalCategory}>
+              {editingId !== null ? "Edit clinical case" : "Add clinical case"}
+            </span>
+
+            <h3>
+              {editingId !== null ? "Update case details" : "Upload a new case"}
+            </h3>
 
             <div className={styles.formGrid}>
               <label>
-                Category
-                <select
+                Case category *
+                <input
                   value={form.category}
                   onChange={(event) =>
-                    updateField("category", event.target.value as StoredCategory)
+                    updateField("category", event.target.value)
                   }
-                >
+                  placeholder="Write any category, e.g. Smile Designing"
+                  list="case-category-suggestions"
+                />
+                <datalist id="case-category-suggestions">
                   {categories
-                    .filter((category): category is StoredCategory => category !== "All")
+                    .filter((category) => category !== "All")
                     .map((category) => (
-                      <option value={category} key={category}>
-                        {category}
-                      </option>
+                      <option value={category} key={category} />
                     ))}
-                </select>
+                </datalist>
               </label>
 
               <label>
@@ -379,7 +486,7 @@ export default function CaseHighlights() {
                 <input
                   value={form.title}
                   onChange={(event) => updateField("title", event.target.value)}
-                  placeholder="Example: Root Canal Treatment"
+                  placeholder="Write the case title"
                 />
               </label>
 
@@ -388,7 +495,7 @@ export default function CaseHighlights() {
                 <input
                   value={form.tooth}
                   onChange={(event) => updateField("tooth", event.target.value)}
-                  placeholder="Example: Tooth 36"
+                  placeholder="Example: Tooth 36 or upper anterior region"
                 />
               </label>
 
@@ -403,43 +510,56 @@ export default function CaseHighlights() {
             </div>
 
             <div className={styles.photoGrid}>
-              <label className={styles.photoUpload}>
-                <span>Before photograph *</span>
-                <div className={styles.uploadPreview}>
-                  {form.beforeImage ? (
-                    <img src={form.beforeImage} alt="Before case preview" />
-                  ) : (
-                    <>
-                      <FaCamera />
-                      <small>Select before photo</small>
-                    </>
-                  )}
-                </div>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(event) => handleImage(event, "beforeImage")}
-                />
-              </label>
+              {(["beforeImage", "afterImage"] as const).map((key) => {
+                const isBefore = key === "beforeImage";
+                const value = form[key];
+                return (
+                  <div className={styles.photoEditor} key={key}>
+                    <span className={styles.photoLabel}>
+                      {isBefore ? "Before photograph" : "After photograph"}
+                    </span>
 
-              <label className={styles.photoUpload}>
-                <span>After photograph *</span>
-                <div className={styles.uploadPreview}>
-                  {form.afterImage ? (
-                    <img src={form.afterImage} alt="After case preview" />
-                  ) : (
-                    <>
-                      <FaUpload />
-                      <small>Select after photo</small>
-                    </>
-                  )}
-                </div>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(event) => handleImage(event, "afterImage")}
-                />
-              </label>
+                    <div className={styles.uploadPreview}>
+                      {value ? (
+                        <img
+                          src={value}
+                          alt={`${isBefore ? "Before" : "After"} case preview`}
+                        />
+                      ) : (
+                        <>
+                          <FaCamera />
+                          <small>
+                            Select {isBefore ? "before" : "after"} photograph
+                          </small>
+                        </>
+                      )}
+                    </div>
+
+                    <div className={styles.photoActions}>
+                      <label className={styles.photoButton}>
+                        <FaUpload />
+                        {value ? "Replace" : "Upload"}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(event) => handleImage(event, key)}
+                        />
+                      </label>
+
+                      {value && (
+                        <button
+                          type="button"
+                          className={styles.removePhotoButton}
+                          onClick={() => updateField(key, "")}
+                        >
+                          <FaTrash />
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
             <div className={styles.textAreaGrid}>
@@ -447,7 +567,10 @@ export default function CaseHighlights() {
                 Patient concern *
                 <textarea
                   value={form.complaint}
-                  onChange={(event) => updateField("complaint", event.target.value)}
+                  onChange={(event) =>
+                    updateField("complaint", event.target.value)
+                  }
+                  placeholder="Describe the patient's concern"
                 />
               </label>
 
@@ -455,7 +578,10 @@ export default function CaseHighlights() {
                 Diagnosis *
                 <textarea
                   value={form.diagnosis}
-                  onChange={(event) => updateField("diagnosis", event.target.value)}
+                  onChange={(event) =>
+                    updateField("diagnosis", event.target.value)
+                  }
+                  placeholder="Enter the diagnosis"
                 />
               </label>
 
@@ -463,7 +589,10 @@ export default function CaseHighlights() {
                 Treatment performed *
                 <textarea
                   value={form.treatment}
-                  onChange={(event) => updateField("treatment", event.target.value)}
+                  onChange={(event) =>
+                    updateField("treatment", event.target.value)
+                  }
+                  placeholder="Describe the treatment performed"
                 />
               </label>
 
@@ -471,21 +600,37 @@ export default function CaseHighlights() {
                 Outcome *
                 <textarea
                   value={form.outcome}
-                  onChange={(event) => updateField("outcome", event.target.value)}
+                  onChange={(event) =>
+                    updateField("outcome", event.target.value)
+                  }
+                  placeholder="Describe the clinical outcome"
                 />
               </label>
             </div>
 
             {formError && <p className={styles.formError}>{formError}</p>}
 
-            <button type="submit" className={styles.saveButton}>
-              <FaUpload />
-              Save and Publish Case
-            </button>
+            <div className={styles.formFooter}>
+              <button
+                type="button"
+                className={styles.cancelButton}
+                onClick={closeUploader}
+              >
+                Cancel
+              </button>
+
+              <button type="submit" className={styles.saveButton}>
+                {editingId !== null ? <FaSave /> : <FaUpload />}
+                {editingId !== null
+                  ? "Save Changes"
+                  : "Save and Publish Case"}
+              </button>
+            </div>
 
             <p className={styles.storageNote}>
-              This version stores uploaded cases in the current browser. A secure
-              online admin dashboard and cloud storage can be added later.
+              Cases are currently stored in this browser on this device.
+              Cloud storage will be needed for synchronized admin access across
+              devices.
             </p>
           </form>
         </div>
@@ -495,14 +640,15 @@ export default function CaseHighlights() {
         <div
           className={styles.modalBackdrop}
           role="presentation"
-          onClick={() => setSelectedCase(null)}
+          onMouseDown={(event) => {
+            if (event.currentTarget === event.target) setSelectedCase(null);
+          }}
         >
           <div
             className={styles.modal}
             role="dialog"
             aria-modal="true"
             aria-labelledby="case-modal-title"
-            onClick={(event) => event.stopPropagation()}
           >
             <button
               type="button"
@@ -513,7 +659,29 @@ export default function CaseHighlights() {
               <FaTimes />
             </button>
 
-            <span className={styles.modalCategory}>{selectedCase.category}</span>
+            <div className={styles.modalTopActions}>
+              <button
+                type="button"
+                className={styles.modalEditButton}
+                onClick={() => openEditCase(selectedCase)}
+              >
+                <FaEdit />
+                Edit
+              </button>
+
+              <button
+                type="button"
+                className={styles.modalDeleteButton}
+                onClick={() => deleteCase(selectedCase.id)}
+              >
+                <FaTrash />
+                Delete
+              </button>
+            </div>
+
+            <span className={styles.modalCategory}>
+              {selectedCase.category}
+            </span>
             <h3 id="case-modal-title">{selectedCase.title}</h3>
 
             <div className={styles.modalImages}>
@@ -527,7 +695,8 @@ export default function CaseHighlights() {
                   />
                 ) : (
                   <div className={styles.modalPlaceholder}>
-                    <FaTooth />
+                    <FaCamera />
+                    <small>No photograph</small>
                   </div>
                 )}
               </div>
@@ -543,12 +712,17 @@ export default function CaseHighlights() {
                 ) : (
                   <div className={styles.modalPlaceholder}>
                     <FaCheckCircle />
+                    <small>No photograph</small>
                   </div>
                 )}
               </div>
             </div>
 
             <dl className={styles.fullDetails}>
+              <div>
+                <dt>Tooth / region</dt>
+                <dd>{selectedCase.tooth || "Not specified"}</dd>
+              </div>
               <div>
                 <dt>Patient concern</dt>
                 <dd>{selectedCase.complaint}</dd>
