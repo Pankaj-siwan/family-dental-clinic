@@ -37,8 +37,22 @@ export default function Hero() {
           </div>
 
           <h1 className={styles.title}>
-            Family Dental Clinic
-            <span>&amp; Implant Center</span>
+            <motion.span
+              className={styles.primaryTitleLine}
+              initial={{ opacity: 0, x: -34 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, delay: 0.18, ease: "easeOut" }}
+            >
+              Family Dental Clinic
+            </motion.span>
+            <motion.span
+              className={styles.accentTitleLine}
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.42, ease: "easeOut" }}
+            >
+              &amp; Implant Center
+            </motion.span>
           </h1>
 
           <p className={styles.tagline}>
