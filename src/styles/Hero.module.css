@@ -3,8 +3,16 @@
   overflow: hidden;
   padding: 74px 24px 86px;
   background:
-    radial-gradient(circle at 0% 10%, rgba(20, 184, 166, 0.13), transparent 30%),
-    radial-gradient(circle at 100% 20%, rgba(8, 145, 178, 0.12), transparent 30%),
+    radial-gradient(
+      circle at 0% 10%,
+      rgba(20, 184, 166, 0.13),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 100% 20%,
+      rgba(8, 145, 178, 0.12),
+      transparent 30%
+    ),
     linear-gradient(135deg, #f8fffe 0%, #f4fbff 52%, #ffffff 100%);
 }
 
@@ -131,12 +139,14 @@
   font-size: 0.86rem;
   font-weight: 850;
   text-decoration: none;
-  transition: transform 180ms ease, box-shadow 180ms ease;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .primaryButton {
   background: linear-gradient(135deg, #0f766e, #0891b2);
-  color: #fff;
+  color: #ffffff;
   box-shadow: 0 14px 30px rgba(15, 118, 110, 0.24);
 }
 
@@ -148,7 +158,7 @@
 
 .whatsappButton {
   background: #22c55e;
-  color: #fff;
+  color: #ffffff;
   box-shadow: 0 14px 28px rgba(34, 197, 94, 0.2);
 }
 
@@ -209,16 +219,27 @@
 
 .imageOverlay {
   position: absolute;
+  z-index: 1;
   inset: 0;
-  background: linear-gradient(180deg, transparent 55%, rgba(9, 39, 56, 0.7));
+  background:
+    linear-gradient(
+      180deg,
+      rgba(9, 39, 56, 0) 34%,
+      rgba(9, 39, 56, 0.16) 50%,
+      rgba(9, 39, 56, 0.55) 70%,
+      rgba(9, 39, 56, 0.92) 100%
+    );
 }
 
 .imageCaption {
   position: absolute;
-  right: 30px;
-  bottom: 28px;
-  left: 30px;
-  color: #fff;
+  z-index: 3;
+  right: 34px;
+  bottom: 118px;
+  left: 34px;
+  max-width: 420px;
+  color: #ffffff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.38);
 }
 
 .imageCaption span,
@@ -227,16 +248,18 @@
 }
 
 .imageCaption span {
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   font-size: 0.76rem;
-  font-weight: 750;
+  font-weight: 800;
+  line-height: 1.35;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .imageCaption strong {
-  font-size: 1.35rem;
+  font-size: clamp(1.35rem, 2vw, 1.7rem);
   font-weight: 900;
+  line-height: 1.18;
 }
 
 .logoCard,
@@ -308,13 +331,13 @@
 }
 
 .hoursCard {
-  bottom: 16px;
+  bottom: -8px;
   left: 0;
 }
 
 .treatmentCard {
   right: -12px;
-  bottom: 90px;
+  bottom: 72px;
 }
 
 .hoursCard > svg,
@@ -415,6 +438,22 @@
     width: 195px;
   }
 
+  .imageCaption {
+    right: 22px;
+    bottom: 158px;
+    left: 22px;
+    max-width: 340px;
+  }
+
+  .imageCaption span {
+    font-size: 0.7rem;
+  }
+
+  .imageCaption strong {
+    font-size: 1.28rem;
+    line-height: 1.18;
+  }
+
   .treatmentCard {
     right: 0;
     bottom: 26px;
@@ -438,14 +477,28 @@
     min-height: 540px;
   }
 
+  .imageCaption {
+    right: 18px;
+    bottom: 100px;
+    left: 18px;
+  }
+
+  .imageCaption span {
+    font-size: 0.64rem;
+  }
+
+  .imageCaption strong {
+    font-size: 1.08rem;
+  }
+
   .hoursCard {
     display: none;
   }
 
   .treatmentCard {
-    left: 12px;
     right: 12px;
     bottom: 12px;
+    left: 12px;
   }
 }
 
@@ -454,5 +507,11 @@
   .secondaryButton,
   .whatsappButton {
     transition: none;
+  }
+
+  .primaryButton:hover,
+  .secondaryButton:hover,
+  .whatsappButton:hover {
+    transform: none;
   }
 }
