@@ -1,91 +1,54 @@
-import {
-  FaCheckCircle,
-  FaGraduationCap,
-  FaHeartbeat,
-  FaShieldAlt,
-  FaSmile,
-  FaTooth,
-  FaUserMd,
-} from "react-icons/fa";
+import Image from "next/image";
+import { FaGraduationCap, FaShieldAlt, FaTooth, FaUserMd } from "react-icons/fa";
 import styles from "@/styles/DoctorProfile.module.css";
 
-const expertise = [
-  "Root Canal Treatment",
-  "Dental Implants",
-  "Oral Surgery",
-  "Crowns & Bridges",
-  "Restorative Dentistry",
-  "Family Dental Care",
+const doctors = [
+  {
+    name: "Dr. Pankaj",
+    qualification: "MDS",
+    role: "Dental Surgeon & Specialist",
+    image: "/images/dr-pankaj-official.png",
+    focus: "Advanced treatment planning, root canal care, oral surgery and implant dentistry.",
+  },
+  {
+    name: "Dr. Anita Kumari",
+    qualification: "BDS",
+    role: "Dental Surgeon",
+    image: "/images/dr-anita-official.jpg",
+    focus: "Family dentistry, preventive care, restorative dentistry and patient-centred treatment.",
+  },
 ];
 
 export default function DoctorProfile() {
   return (
     <section className={styles.section} id="doctor">
       <div className={styles.container}>
-        <div className={styles.visual}>
-          <div className={styles.photoPlaceholder}>
-            <FaUserMd />
-            <span>Add Doctor Photograph</span>
-          </div>
-
-          <div className={styles.floatingCard}>
-            <FaShieldAlt />
-            <div>
-              <strong>Patient-first dentistry</strong>
-              <span>Clear guidance, careful planning, comfortable care</span>
-            </div>
-          </div>
+        <div className={styles.headingArea}>
+          <span className={styles.eyebrow}><FaUserMd /> Meet Our Dentists</span>
+          <h2>Experienced care guided by <span>trust and precision</span></h2>
+          <p>Meet the dentists providing comprehensive dental care across our clinics in and around Siwan.</p>
         </div>
 
-        <div className={styles.content}>
-          <span className={styles.eyebrow}>
-            <FaUserMd />
-            Meet Your Dentist
-          </span>
-
-          <h2>
-            Clinical care guided by
-            <span> trust and precision</span>
-          </h2>
-
-          <p className={styles.lead}>
-            At Family Dental Clinic &amp; Implant Center, every patient receives
-            an individual examination and a treatment plan suited to their oral
-            health needs.
-          </p>
-
-          <p className={styles.body}>
-            The focus is on preserving natural teeth whenever possible,
-            explaining treatment choices clearly, and creating a calm and
-            respectful experience for patients of all ages.
-          </p>
-
-          <div className={styles.credentials}>
-            <article>
-              <FaGraduationCap />
-              <div>
-                <strong>Professional dental care</strong>
-                <span>Add qualification and registration details here</span>
+        <div className={styles.doctorGrid}>
+          {doctors.map((doctor) => (
+            <article className={styles.doctorCard} key={doctor.name}>
+              <div className={styles.photoWrap}>
+                <Image src={doctor.image} alt={`${doctor.name}, ${doctor.qualification}`} fill sizes="(max-width: 760px) 100vw, 50vw" className={styles.photo} />
+              </div>
+              <div className={styles.cardContent}>
+                <span className={styles.role}>{doctor.role}</span>
+                <h3>{doctor.name}</h3>
+                <strong><FaGraduationCap /> {doctor.qualification}</strong>
+                <p>{doctor.focus}</p>
+                <div className={styles.trustLine}><FaShieldAlt /><span>Clear guidance, careful planning and respectful patient care.</span></div>
               </div>
             </article>
+          ))}
+        </div>
 
-            <article>
-              <FaHeartbeat />
-              <div>
-                <strong>Comprehensive treatment planning</strong>
-                <span>Preventive, restorative, surgical, and implant care</span>
-              </div>
-            </article>
-          </div>
-
-          <div className={styles.expertise}>
-            {expertise.map((item) => (
-              <span key={item}>
-                <FaCheckCircle />
-                {item}
-              </span>
-            ))}
-          </div>
+        <div className={styles.bottomNote}>
+          <FaTooth />
+          <div><strong>Complete family dental care</strong><span>Preventive, restorative, surgical and implant treatment under one trusted clinical team.</span></div>
         </div>
       </div>
     </section>

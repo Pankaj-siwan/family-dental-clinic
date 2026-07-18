@@ -1,0 +1,19 @@
+FAMILY DENTAL CLINIC WEBSITE — STAGE 1
+
+Visible updates included:
+- Premium sticky navigation bar
+- Clinic logo and full branding
+- New hero heading and tagline
+- Three clinic locations highlighted
+- Updated appointment, phone and WhatsApp buttons
+- Modern responsive mobile navigation
+
+HOW TO RUN
+1. Extract the ZIP.
+2. Open the extracted folder.
+3. Open CMD/Terminal in that folder.
+4. Run: npm install
+5. Run: npm run dev
+6. Open the exact localhost address shown in the terminal.
+
+Note: package.json is directly inside the extracted folder.

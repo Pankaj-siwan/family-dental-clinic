@@ -75,20 +75,12 @@
   grid-row: span 2;
 }
 
-.placeholder {
-  display: grid;
-  width: 100%;
-  height: 100%;
-  place-items: center;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.7), transparent 28%),
-    linear-gradient(135deg, #dff8f4, #dff3f9);
-  color: rgba(15, 118, 110, 0.45);
-  font-size: 4rem;
+.image {
+  object-fit: cover;
   transition: transform 260ms ease;
 }
 
-.item:hover .placeholder {
+.item:hover .image {
   transform: scale(1.05);
 }
 
@@ -142,11 +134,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .placeholder {
+  .image {
     transition: none;
   }
 
-  .item:hover .placeholder {
+  .item:hover .image {
     transform: none;
   }
 }
