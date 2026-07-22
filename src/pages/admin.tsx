@@ -15,34 +15,7 @@ import {
 
 import { auth } from "@/lib/firebase";
 
-function getFirebaseErrorMessage(error: unknown): string {
-  const code =
-    typeof error === "object" &&
-    error !== null &&
-    "code" in error &&
-    typeof error.code === "string"
-      ? error.code
-      : "";
 
-  switch (code) {
-    case "auth/invalid-credential":
-    case "auth/wrong-password":
-    case "auth/user-not-found":
-      return "The email address or password is incorrect.";
-
-    case "auth/invalid-email":
-      return "Please enter a valid email address.";
-
-    case "auth/too-many-requests":
-      return "Too many unsuccessful attempts. Please wait and try again.";
-
-    case "auth/network-request-failed":
-      return "Network error. Please check your internet connection.";
-
-    default:
-      return "Login failed. Please check your details and try again.";
-  }
-}
 
 export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -65,27 +38,45 @@ export default function AdminPage() {
   }, []);
 
   async function handleLogin(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  event.preventDefault();
 
-    const cleanEmail = email.trim();
+  const cleanEmail = email.trim();
 
-    if (!cleanEmail || !password) {
-      setError("Please enter your email address and password.");
-      return;
-    }
-
-    try {
-      setLoggingIn(true);
-      setError("");
-
-      await signInWithEmailAndPassword(auth, cleanEmail, password);
-      setPassword("");
-    } catch (loginError) {
-      setError(getFirebaseErrorMessage(loginError));
-    } finally {
-      setLoggingIn(false);
-    }
+  if (!cleanEmail || !password) {
+    setError("Please enter your email address and password.");
+    return;
   }
+
+  setLoggingIn(true);
+  setError("");
+
+  try {
+    await signInWithEmailAndPassword(auth, cleanEmail, password);
+    setPassword("");
+} catch (err: unknown) {
+  console.error("🔥 Firebase Login Error:", err);
+
+  const errorCode =
+    typeof err === "object" &&
+    err !== null &&
+    "code" in err
+      ? String(err.code)
+      : "unknown-error";
+
+  const errorMessage =
+    typeof err === "object" &&
+    err !== null &&
+    "message" in err
+      ? String(err.message)
+      : "Unknown Firebase error";
+
+  setError(
+    `Error Code: ${errorCode}\nMessage: ${errorMessage}`
+  );
+} finally {
+  setLoggingIn(false);
+}
+}
 
   async function handleLogout() {
     try {
@@ -449,6 +440,7 @@ export default function AdminPage() {
           background: #fff1f2;
           font-size: 0.83rem;
           line-height: 1.5;
+          white-space: pre-line;
         }
 
         .securityNote {
