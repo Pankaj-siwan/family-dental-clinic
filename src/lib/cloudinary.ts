@@ -1,4 +1,4 @@
-export const CLOUDINARY_CLOUD_NAME = "mf7odeuh";
+export const CLOUDINARY_CLOUD_NAME = "mf70deuh";
 export const CLOUDINARY_UPLOAD_PRESET = "family_dental_cases";
 
 export type CloudinaryUploadResult = {
