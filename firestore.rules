@@ -1,6 +1,16 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.uid == "z07RsgO85iU9W1kmekJGD013KqI2";
+    }
+
+    /*
+     * Public website appointment booking
+     */
     match /appointments/{appointmentId} {
       allow create: if
         request.resource.data.source == "website" &&
@@ -17,6 +27,25 @@ service cloud.firestore {
         request.resource.data.chiefComplaint.size() <= 1000;
 
       allow read, update, delete: if false;
+    }
+
+    /*
+     * Clinical case gallery
+     */
+    match /clinicalCases/{caseId} {
+
+      // Anyone may view a case only when it is published.
+      allow get, list: if resource.data.published == true;
+
+      // Only the designated administrator can add, edit or delete.
+      allow create, update, delete: if isAdmin();
+    }
+
+    /*
+     * Deny access to every other collection by default.
+     */
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
