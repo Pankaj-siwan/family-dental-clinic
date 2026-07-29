@@ -10,6 +10,7 @@ import {
   serverTimestamp,
   Timestamp,
   updateDoc,
+  where,
 } from "firebase/firestore";
 
 import { db } from "@/lib/firebase";
@@ -144,6 +145,22 @@ export async function getClinicalCases(): Promise<
 > {
   const casesQuery = query(
     collection(db, COLLECTION_NAME),
+    orderBy("createdAt", "desc")
+  );
+
+  const snapshot = await getDocs(casesQuery);
+
+  return snapshot.docs.map((caseDocument) =>
+    convertDocument(caseDocument.id, caseDocument.data())
+  );
+}
+
+export async function getPublishedClinicalCases(): Promise<
+  ClinicalCase[]
+> {
+  const casesQuery = query(
+    collection(db, COLLECTION_NAME),
+    where("published", "==", true),
     orderBy("createdAt", "desc")
   );
 
