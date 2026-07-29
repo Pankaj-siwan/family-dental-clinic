@@ -14,6 +14,7 @@ import {
 } from "react-icons/fa6";
 
 import { auth } from "@/lib/firebase";
+import ClinicalCaseAdmin from "@/components/ClinicalCaseAdmin";
 
 
 
@@ -54,7 +55,7 @@ export default function AdminPage() {
     await signInWithEmailAndPassword(auth, cleanEmail, password);
     setPassword("");
 } catch (err: unknown) {
-  console.error("🔥 Firebase Login Error:", err);
+ console.warn("Firebase login failed");
 
   const errorCode =
     typeof err === "object" &&
@@ -135,23 +136,7 @@ export default function AdminPage() {
               </button>
             </div>
 
-            <div className="dashboardContent">
-              <div className="dashboardIcon">
-                <FaTooth />
-              </div>
-
-              <h2>Admin login is working</h2>
-
-              <p>
-                Your secure login has been connected successfully.
-                The clinical-case dashboard and Cloudinary uploader
-                will be added here next.
-              </p>
-
-              <div className="statusBadge">
-                Firebase Authentication connected
-              </div>
-            </div>
+<ClinicalCaseAdmin />
           </section>
         ) : (
           <section className="loginCard">
@@ -228,12 +213,14 @@ export default function AdminPage() {
           box-sizing: border-box;
         }
 
-        .adminPage {
-          position: relative;
-          display: grid;
-          min-height: 100vh;
-          place-items: center;
-          overflow: hidden;
+.adminPage {
+  position: relative;
+  display: grid;
+  min-height: 100vh;
+  align-items: start;
+  justify-items: center;
+  overflow-x: hidden;
+  overflow-y: auto;
           padding: 28px;
           background:
             radial-gradient(
@@ -477,9 +464,11 @@ export default function AdminPage() {
           color: #718793;
         }
 
-        .dashboardCard {
-          padding: 38px;
-        }
+.dashboardCard {
+  width: min(1240px, 100%);
+  margin: 0 auto;
+  padding: 38px;
+}
 
         .dashboardHeader {
           display: flex;
