@@ -10,6 +10,7 @@ import {
   FaStar,
   FaTooth,
   FaWhatsapp,
+  FaYoutube,
 } from "react-icons/fa";
 import styles from "@/styles/Hero.module.css";
 
@@ -19,11 +20,63 @@ const highlights = [
   "Patient-first clinical approach",
 ];
 
+const sideVideos = [
+  {
+    name: "Dr. Pankaj",
+    position: "left",
+    channelUrl: "https://www.youtube.com/@familydentalclinicsiwan",
+    uploadsPlaylistId: "UUkLt6fDcwJIlK8I2k8aKLqQ",
+  },
+  {
+    name: "Dr. Anita",
+    position: "right",
+    channelUrl: "https://www.youtube.com/@AnitaKumari-1988",
+    uploadsPlaylistId: "UUsxsonS_6WkvUG3dYPL5IPQ",
+  },
+] as const;
+
 export default function Hero() {
   return (
     <section className={styles.hero} id="home">
       <div className={styles.orbOne} />
       <div className={styles.orbTwo} />
+
+      {sideVideos.map((doctor) => (
+        <aside
+          className={`${styles.sideVideo} ${
+            doctor.position === "left"
+              ? styles.sideVideoLeft
+              : styles.sideVideoRight
+          }`}
+          key={doctor.name}
+          aria-label={`${doctor.name}'s latest dental videos`}
+        >
+          <div className={styles.sideVideoHeading}>
+            <FaYoutube aria-hidden="true" />
+            <div>
+              <strong>{doctor.name}</strong>
+              <span>Latest dental videos</span>
+            </div>
+          </div>
+          <div className={styles.sideVideoFrame}>
+            <iframe
+              src={`https://www.youtube-nocookie.com/embed/videoseries?list=${doctor.uploadsPlaylistId}&rel=0`}
+              title={`${doctor.name}'s latest dental videos`}
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            />
+          </div>
+          <a
+            href={doctor.channelUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View channel
+          </a>
+        </aside>
+      ))}
 
       <div className={styles.container}>
         <motion.div

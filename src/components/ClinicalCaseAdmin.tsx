@@ -27,6 +27,7 @@ import {
   updateClinicalCase,
 } from "@/lib/clinicalCases";
 import { uploadToCloudinary } from "@/lib/cloudinary";
+import { addClinicWatermark } from "@/lib/watermark";
 
 const EMPTY_FORM: ClinicalCaseInput = {
   category: "",
@@ -100,10 +101,13 @@ export default function ClinicalCaseAdmin() {
     try {
       setUploading(true);
       setError("");
+      setMessage("Adding clinic watermark...");
       const photos: ClinicalCasePhoto[] = [];
 
       for (const file of files) {
-        const uploaded = await uploadToCloudinary(file);
+        const watermarkedFile = await addClinicWatermark(file);
+        const uploaded = await uploadToCloudinary(watermarkedFile);
+
         photos.push({
           url: uploaded.secure_url,
           publicId: uploaded.public_id,
@@ -116,9 +120,13 @@ export default function ClinicalCaseAdmin() {
         ...current,
         photos: [...current.photos, ...photos],
       }));
-      setMessage(`${photos.length} photo(s) uploaded successfully.`);
+
+      setMessage(
+        `${photos.length} watermarked photo(s) uploaded successfully.`
+      );
     } catch (err) {
       setError(errorMessage(err));
+      setMessage("");
     } finally {
       event.target.value = "";
       setUploading(false);
@@ -289,12 +297,15 @@ export default function ClinicalCaseAdmin() {
           <div className="uploadBox">
             <div>
               <h3><FaImage /> Clinical photographs</h3>
-              <p>Upload JPG, PNG or WebP images up to 10 MB each.</p>
+              <p>
+                Upload JPG, PNG or WebP images up to 10 MB each.
+                Clinic watermark is added automatically before upload.
+              </p>
             </div>
 
             <label className="uploadButton">
               <FaCloudArrowUp />
-              {uploading ? "Uploading..." : "Upload photos"}
+              {uploading ? "Watermarking and uploading..." : "Upload photos"}
               <input type="file" accept="image/*" multiple
                 onChange={uploadPhotos} disabled={uploading || saving} />
             </label>
