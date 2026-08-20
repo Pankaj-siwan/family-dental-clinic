@@ -10,10 +10,8 @@ import {
   FaStar,
   FaTooth,
   FaWhatsapp,
-  FaYoutube,
 } from "react-icons/fa";
 import styles from "@/styles/Hero.module.css";
-import { useLatestYouTubeVideo } from "@/lib/useLatestYouTubeVideo";
 
 const highlights = [
   "Complete family dental care",
@@ -21,107 +19,11 @@ const highlights = [
   "Patient-first clinical approach",
 ];
 
-const sideVideos = [
-  {
-    name: "Dr. Pankaj",
-    role: "MDS",
-    image: "/images/dr-pankaj-official.png",
-    channelId: "UCkLt6fDcwJIlK8I2k8aKLqQ",
-    position: "left",
-    channelUrl: "https://www.youtube.com/@familydentalclinicsiwan",
-    uploadsPlaylistId: "UUkLt6fDcwJIlK8I2k8aKLqQ",
-  },
-  {
-    name: "Dr. Anita",
-    role: "BDS",
-    image: "/images/dr-anita-official.jpg",
-    channelId: "UCsxsonS_6WkvUG3dYPL5IPQ",
-    position: "right",
-    channelUrl: "https://www.youtube.com/@AnitaKumari-1988",
-    uploadsPlaylistId: "UUsxsonS_6WkvUG3dYPL5IPQ",
-  },
-] as const;
-
-type SideVideoDoctor = (typeof sideVideos)[number];
-
-function HeroSideVideo({ doctor }: { doctor: SideVideoDoctor }) {
-  const { video, loading } = useLatestYouTubeVideo(doctor.channelId);
-
-  return (
-    <aside
-      className={`${styles.sideVideo} ${
-        doctor.position === "left"
-          ? styles.sideVideoLeft
-          : styles.sideVideoRight
-      }`}
-      aria-label={`${doctor.name}'s latest dental videos`}
-    >
-      <div className={styles.sideVideoAccent} />
-      <div className={styles.sideVideoHeading}>
-        <Image
-          src={doctor.image}
-          alt={doctor.name}
-          width={48}
-          height={48}
-          className={styles.sideDoctorPhoto}
-        />
-        <div>
-          <span className={styles.sideVideoLabel}>
-            <FaYoutube aria-hidden="true" /> Dental insights
-          </span>
-          <strong>{doctor.name}</strong>
-          <small>{doctor.role} · Family Dental Clinic</small>
-        </div>
-      </div>
-
-      <div className={styles.sideVideoFrame}>
-        {video ? (
-          <iframe
-            src={`https://www.youtube-nocookie.com/embed/${video.videoId}?rel=0`}
-            title={video.title}
-            loading="lazy"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-          />
-        ) : (
-          <div
-            className={`${styles.videoFallback} ${
-              loading ? styles.videoLoading : ""
-            }`}
-          >
-            <Image src={doctor.image} alt="" fill sizes="310px" />
-            <div className={styles.fallbackOverlay} />
-            <div className={styles.fallbackContent}>
-              <FaYoutube aria-hidden="true" />
-              <strong>{loading ? "Loading latest video" : "Videos coming soon"}</strong>
-              <span>
-                {loading
-                  ? "Please wait a moment"
-                  : `Follow ${doctor.name} on YouTube`}
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {video && <p className={styles.sideVideoTitle}>{video.title}</p>}
-      <a href={doctor.channelUrl} target="_blank" rel="noopener noreferrer">
-        <FaYoutube aria-hidden="true" /> Visit YouTube channel
-      </a>
-    </aside>
-  );
-}
-
 export default function Hero() {
   return (
     <section className={styles.hero} id="home">
       <div className={styles.orbOne} />
       <div className={styles.orbTwo} />
-
-      {sideVideos.map((doctor) => (
-        <HeroSideVideo doctor={doctor} key={doctor.name} />
-      ))}
 
       <div className={styles.container}>
         <motion.div
