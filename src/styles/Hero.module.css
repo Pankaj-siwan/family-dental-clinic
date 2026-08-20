@@ -29,13 +29,16 @@
   z-index: 4;
   top: 50%;
   display: none;
-  width: clamp(225px, 14.5vw, 280px);
+  width: clamp(270px, 15.5vw, 310px);
   overflow: hidden;
-  border: 1px solid rgba(15, 118, 110, 0.18);
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 24px 58px rgba(15, 42, 67, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.88);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.93);
+  box-shadow:
+    0 28px 70px rgba(15, 42, 67, 0.16),
+    0 2px 0 rgba(255, 255, 255, 0.9) inset;
   transform: translateY(-50%);
+  backdrop-filter: blur(18px);
 }
 
 .sideVideoLeft {
@@ -49,30 +52,54 @@
 .sideVideoHeading {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 13px 14px 11px;
+  gap: 12px;
+  padding: 18px 18px 16px;
 }
 
-.sideVideoHeading > svg {
-  flex: 0 0 auto;
-  color: #ff0033;
-  font-size: 1.35rem;
+.sideVideoAccent {
+  height: 4px;
+  background: linear-gradient(90deg, #0f766e, #0891b2, #14b8a6);
 }
 
 .sideVideoHeading strong,
-.sideVideoHeading span {
+.sideVideoHeading small {
   display: block;
 }
 
 .sideVideoHeading strong {
+  margin-top: 3px;
   color: #17384d;
-  font-size: 0.88rem;
+  font-size: 1rem;
 }
 
-.sideVideoHeading span {
-  margin-top: 2px;
+.sideVideoHeading small {
+  margin-top: 3px;
   color: #718394;
-  font-size: 0.68rem;
+  font-size: 0.66rem;
+}
+
+.sideDoctorPhoto {
+  flex: 0 0 auto;
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 8px 20px rgba(15, 42, 67, 0.17);
+}
+
+.sideVideoLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #0f766e;
+  font-size: 0.59rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sideVideoLabel svg {
+  color: #ff0033;
+  font-size: 0.82rem;
 }
 
 .sideVideoFrame {
@@ -90,18 +117,91 @@
   border: 0;
 }
 
-.sideVideo > a {
+.videoFallback {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.videoFallback > img {
+  object-fit: cover;
+  object-position: center 24%;
+  transform: scale(1.05);
+}
+
+.fallbackOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(8, 47, 63, 0.84), rgba(15, 118, 110, 0.72));
+}
+
+.fallbackContent {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
   display: flex;
-  min-height: 40px;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #0f766e;
+  padding: 18px;
+  color: #ffffff;
+  text-align: center;
+}
+
+.fallbackContent svg {
+  margin-bottom: 9px;
+  font-size: 2rem;
+}
+
+.fallbackContent strong {
+  font-size: 0.92rem;
+}
+
+.fallbackContent span {
+  margin-top: 5px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.67rem;
+}
+
+.videoLoading .fallbackContent {
+  animation: softPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes softPulse {
+  50% {
+    opacity: 0.62;
+  }
+}
+
+.sideVideoTitle {
+  display: -webkit-box;
+  min-height: 49px;
+  margin: 0;
+  padding: 12px 17px 9px;
+  overflow: hidden;
+  color: #294b5c;
+  font-size: 0.72rem;
+  font-weight: 750;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.sideVideo > a {
+  display: flex;
+  min-height: 45px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-top: 1px solid rgba(15, 118, 110, 0.1);
+  color: #ffffff;
+  background: linear-gradient(135deg, #e9002f, #ff174c);
   font-size: 0.75rem;
   font-weight: 800;
 }
 
 .sideVideo > a:hover {
-  background: #effcf9;
+  background: linear-gradient(135deg, #d8002c, #f40f43);
 }
 
 .sideVideo > a:focus-visible {
@@ -655,5 +755,9 @@
   .secondaryButton:hover,
   .whatsappButton:hover {
     transform: none;
+  }
+
+  .videoLoading .fallbackContent {
+    animation: none;
   }
 }

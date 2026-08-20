@@ -97,6 +97,50 @@
   border: 0;
 }
 
+.videoFallback {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.videoFallback > img {
+  object-fit: cover;
+  object-position: center 24%;
+}
+
+.fallbackOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(8, 47, 63, 0.86), rgba(15, 118, 110, 0.72));
+}
+
+.fallbackContent {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  text-align: center;
+}
+
+.fallbackContent svg {
+  margin-bottom: 10px;
+  font-size: 2.5rem;
+}
+
+.fallbackContent strong {
+  font-size: 1.05rem;
+}
+
+.fallbackContent span {
+  margin-top: 6px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.78rem;
+}
+
 .content {
   display: grid;
   gap: 17px;
@@ -108,6 +152,20 @@
   color: #0c2944;
   font-size: 1.5rem;
   line-height: 1.2;
+}
+
+.doctorHeading {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.doctorHeading > img {
+  flex: 0 0 auto;
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 8px 20px rgba(15, 42, 67, 0.16);
 }
 
 .role {
