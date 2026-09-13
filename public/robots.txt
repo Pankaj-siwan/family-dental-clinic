@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://www.familydentalsiwan.in/sitemap.xml
+Host: https://www.familydentalsiwan.in

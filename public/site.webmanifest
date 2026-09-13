@@ -1,0 +1,16 @@
+{
+  "name": "Family Dental Clinic & Implant Center",
+  "short_name": "Family Dental Siwan",
+  "description": "Trusted dental clinic in Siwan, Bihar.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0f766e",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}
