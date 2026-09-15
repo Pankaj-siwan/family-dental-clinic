@@ -12,10 +12,11 @@ import styles from "@/styles/Navbar.module.css";
 
 const navItems = [
   ["Home", "#home"],
-  ["Treatments", "#treatments"],
   ["Our Clinics", "#clinics"],
-  ["Gallery", "#gallery"],
-  ["Doctors", "#doctors"],
+  ["From the Doctors", "#from-the-doctors"],
+  ["Treatments", "#treatments"],
+  ["Cases", "#cases"],
+  ["Reviews", "#reviews"],
   ["Contact", "#contact"],
 ] as const;
 

@@ -1,52 +1,73 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    function isAdmin() {
+    function isDentalAdmin() {
       return request.auth != null
-        && request.auth.token.email
-          == "familydentalclinic.siwan@gmail.com";
+        && request.auth.token.email == "familydentalclinic.siwan@gmail.com";
     }
 
-    /*
-     * Public website appointment booking
-     */
+    function isBkPrasadAdmin() {
+      return request.auth != null
+        && request.auth.token.email == "bkprasadhomeopathy@gmail.com";
+    }
+
     match /appointments/{appointmentId} {
-      allow create: if
-        request.resource.data.source == "website" &&
-        request.resource.data.status == "pending" &&
-        request.resource.data.patientName is string &&
-        request.resource.data.patientName.size() >= 2 &&
-        request.resource.data.patientName.size() <= 100 &&
-        request.resource.data.mobile is string &&
-        request.resource.data.mobile.matches('^[0-9]{10}$') &&
-        request.resource.data.clinicId is string &&
-        request.resource.data.appointmentDate is string &&
-        request.resource.data.appointmentTime is string &&
-        request.resource.data.chiefComplaint is string &&
-        request.resource.data.chiefComplaint.size() <= 1000;
-
-      allow read, update, delete: if isAdmin();
+      allow create: if request.resource.data.source == "website"
+        && request.resource.data.status == "pending"
+        && request.resource.data.patientName is string
+        && request.resource.data.patientName.size() >= 2
+        && request.resource.data.patientName.size() <= 100
+        && request.resource.data.mobile is string
+        && request.resource.data.mobile.matches('^[0-9]{10}$')
+        && request.resource.data.clinicId is string
+        && request.resource.data.appointmentDate is string
+        && request.resource.data.appointmentTime is string
+        && request.resource.data.chiefComplaint is string
+        && request.resource.data.chiefComplaint.size() <= 1000;
+      allow read, update, delete: if isDentalAdmin();
     }
 
-    /*
-     * Clinical case gallery
-     */
     match /clinicalCases/{caseId} {
-
-      // Administrator may view every case.
-      // Public visitors may view only published cases.
-      allow read: if isAdmin()
-        || resource.data.published == true;
-
-      // Only the administrator may add, edit or delete.
-      allow create, update, delete: if isAdmin();
+      allow read: if isDentalAdmin() || resource.data.published == true;
+      allow create, update, delete: if isDentalAdmin();
     }
 
-    /*
-     * Deny every other collection by default.
-     */
+    // Content controlled by the separate Family Dental Website Admin app.
+    match /website_articles/{articleId} {
+      allow read: if isDentalAdmin() || resource.data.published == true;
+      allow create, update, delete: if isDentalAdmin();
+    }
+    match /website_gallery/{photoId} {
+      allow read: if isDentalAdmin() || resource.data.published == true;
+      allow create, update, delete: if isDentalAdmin();
+    }
+    match /website_ribbon/{messageId} {
+      allow read: if isDentalAdmin() || resource.data.active == true;
+      allow create, update, delete: if isDentalAdmin();
+    }
+    match /website_settings/{documentId} {
+      allow read: if true;
+      allow create, update, delete: if isDentalAdmin();
+    }
+
+    // Existing B. K. Prasad website content remains protected and unchanged.
+    match /bk_prasad_cases/{caseId} {
+      allow read: if isBkPrasadAdmin() || resource.data.published == true;
+      allow create, update, delete: if isBkPrasadAdmin();
+    }
+    match /bk_prasad_testimonials/{testimonialId} {
+      allow read: if isBkPrasadAdmin() || resource.data.published == true;
+      allow create, update, delete: if isBkPrasadAdmin();
+    }
+    match /bk_prasad_articles/{articleId} {
+      allow read: if isBkPrasadAdmin() || resource.data.published == true;
+      allow create, update, delete: if isBkPrasadAdmin();
+    }
+    match /bk_prasad_site/{documentId} {
+      allow read: if true;
+      allow create, update, delete: if isBkPrasadAdmin();
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

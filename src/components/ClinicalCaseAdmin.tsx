@@ -77,6 +77,8 @@ export default function ClinicalCaseAdmin() {
   }
 
   useEffect(() => {
+    // Initial data synchronization with Firestore.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadCases();
   }, []);
 

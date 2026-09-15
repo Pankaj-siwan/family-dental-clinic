@@ -46,7 +46,15 @@ function makeAppointmentId(data: WebsiteAppointment) {
     .replace(/[^a-zA-Z0-9_-]/g, "");
 }
 
-function decodeFirestoreValue(value: any): unknown {
+type FirestoreRestValue = {
+  stringValue?: string;
+  integerValue?: string;
+  booleanValue?: boolean;
+  timestampValue?: string;
+  nullValue?: null;
+};
+
+function decodeFirestoreValue(value: FirestoreRestValue | undefined): unknown {
   if (!value || typeof value !== "object") return null;
   if ("stringValue" in value) return value.stringValue;
   if ("integerValue" in value) return Number(value.integerValue);
@@ -56,7 +64,7 @@ function decodeFirestoreValue(value: any): unknown {
   return null;
 }
 
-function decodeFirestoreFields(fields: Record<string, any> | undefined) {
+function decodeFirestoreFields(fields: Record<string, FirestoreRestValue> | undefined) {
   const result: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(fields ?? {})) {
     result[key] = decodeFirestoreValue(value);
@@ -153,7 +161,7 @@ export async function getAvailableAppointmentSlots({
     throw new Error(body?.error?.message || "The available appointment slots could not be loaded.");
   }
 
-  const rows = (await response.json()) as Array<{ document?: { fields?: Record<string, any> } }>;
+  const rows = (await response.json()) as Array<{ document?: { fields?: Record<string, FirestoreRestValue> } }>;
   const occupied = new Set(
     rows
       .filter((item) => item.document?.fields)

@@ -54,7 +54,7 @@
 
 .container {
   display: grid;
-  width: min(1180px, 100%);
+  width: min(var(--page-max), 100%);
   margin: 0 auto;
   grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1.28fr);
   gap: 34px;

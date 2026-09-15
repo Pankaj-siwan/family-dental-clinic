@@ -1,5 +1,5 @@
-.section{position:relative;overflow:hidden;padding:108px 24px;background:radial-gradient(circle at 8% 15%,rgba(20,184,166,.08),transparent 24%),radial-gradient(circle at 92% 85%,rgba(14,165,233,.07),transparent 25%),linear-gradient(180deg,#fff,#f5fbfc)}
-.container{width:min(1180px,100%);margin:0 auto}
+.section{position:relative;overflow:hidden;padding:108px var(--page-gutter);background:radial-gradient(circle at 8% 15%,rgba(20,184,166,.08),transparent 24%),radial-gradient(circle at 92% 85%,rgba(14,165,233,.07),transparent 25%),linear-gradient(180deg,#fff,#f5fbfc)}
+.container{width:min(var(--page-max),100%);margin:0 auto}
 .headingArea{max-width:800px;margin:0 auto 48px;text-align:center}
 .eyebrow{display:inline-flex;align-items:center;gap:9px;margin-bottom:18px;padding:8px 14px;border:1px solid rgba(13,148,136,.16);border-radius:999px;background:rgba(240,253,250,.9);color:#0f766e;font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
 .headingArea h2{margin:0;color:#102a43;font-size:clamp(2.1rem,4.3vw,3.7rem);font-weight:800;line-height:1.08;letter-spacing:-.045em}.headingArea h2 span{background:linear-gradient(135deg,#0f766e,#0891b2);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}.headingArea p{max-width:710px;margin:20px auto 0;color:#667b8b;font-size:.96rem;line-height:1.72}

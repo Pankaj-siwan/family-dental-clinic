@@ -17,7 +17,7 @@
 
 .topBarInner {
   display: flex;
-  width: min(1240px, 100%);
+  width: min(var(--page-max), 100%);
   min-height: 32px;
   margin: 0 auto;
   padding: 0 24px;
@@ -37,7 +37,7 @@
 
 .nav {
   display: flex;
-  width: min(1240px, 100%);
+  width: min(var(--page-max), 100%);
   min-height: 94px;
   margin: 0 auto;
   padding: 0 24px;

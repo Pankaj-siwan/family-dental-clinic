@@ -11,7 +11,7 @@
 .container {
   position: relative;
   z-index: 2;
-  width: min(1180px, 100%);
+  width: min(var(--page-max), 100%);
   margin: 0 auto;
 }
 

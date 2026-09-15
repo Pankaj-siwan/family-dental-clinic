@@ -1,19 +1,13 @@
 import Head from "next/head";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import AboutClinic from "@/components/AboutClinic";
+import ContentRibbon from "@/components/ContentRibbon";
+import TrustStrip from "@/components/TrustStrip";
 import Treatments from "@/components/Treatments";
 import Clinics from "@/components/Clinics";
-import DoctorProfile from "@/components/DoctorProfile";
-import WhyChooseUs from "@/components/WhyChooseUs";
 import CaseHighlights from "@/components/CaseHighlights";
-import DoctorVideos from "@/components/DoctorVideos";
-import Facilities from "@/components/Facilities";
-import Gallery from "@/components/Gallery";
-import PatientJourney from "@/components/PatientJourney";
-import PaymentOptions from "@/components/PaymentOptions";
+import FromTheDoctors from "@/components/FromTheDoctors";
 import GoogleReviews from "@/components/GoogleReviews";
-import FAQ from "@/components/FAQ";
 import Appointment from "@/components/Appointment";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
@@ -203,22 +197,16 @@ export default function Home() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </Head>
+      <ContentRibbon />
       <Navbar />
       <main>
         <Hero />
-        <AboutClinic />
-        <Treatments />
-        <DoctorVideos />
+        <TrustStrip />
         <Clinics />
-        <DoctorProfile />
-        <WhyChooseUs />
+        <FromTheDoctors />
+        <Treatments />
         <CaseHighlights />
-        <Facilities />
-        <Gallery />
-        <PatientJourney />
-        <PaymentOptions />
         <GoogleReviews />
-        <FAQ />
         <Appointment />
         <ContactSection />
       </main>

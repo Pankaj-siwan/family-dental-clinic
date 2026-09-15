@@ -44,11 +44,11 @@
   position: relative;
   z-index: 2;
   display: grid;
-  width: min(1240px, 100%);
+  width: min(var(--page-max), 100%);
   margin: 0 auto;
-  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
   align-items: center;
-  gap: 72px;
+  gap: clamp(48px, 5vw, 92px);
 }
 
 .content {
