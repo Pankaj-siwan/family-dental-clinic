@@ -36,7 +36,7 @@ const clinics: Clinic[] = [
     shortName: "Siwan Main Clinic",
     location: "Fatehpur, Siwan",
     address: "Fatehpur Bypass Road, in front of RC Complex, Siwan, Bihar",
-    timingLines: ["Open every day", "9:00 AM – 8:00 PM"],
+    timingLines: ["Monday – Saturday: 9:00 AM – 7:00 PM", "Sunday: 10:30 AM – 5:30 PM"],
     bookingNote: "Walk-in and prior appointment booking available.",
     phone: "+918618528975",
     whatsapp: "918618528975",

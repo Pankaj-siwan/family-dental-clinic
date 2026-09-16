@@ -12,5 +12,17 @@
       "sizes": "48x48",
       "type": "image/x-icon"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "Book an appointment",
+      "short_name": "Book",
+      "url": "/#appointment"
+    },
+    {
+      "name": "Google Business Profile",
+      "short_name": "Google Profile",
+      "url": "https://www.google.com/maps?cid=17443801916793355859"
+    }
   ]
 }

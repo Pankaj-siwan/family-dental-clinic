@@ -4,6 +4,7 @@ import {
   FaCalendarCheck,
   FaCheckCircle,
   FaClock,
+  FaGoogle,
   FaMapMarkerAlt,
   FaPhoneAlt,
   FaShieldAlt,
@@ -125,21 +126,21 @@ export default function Hero() {
             />
           </div>
 
-          <div className={styles.ratingCard}>
+          <a className={styles.ratingCard} href="https://www.google.com/maps?cid=17443801916793355859" target="_blank" rel="noopener noreferrer" aria-label="Open the verified Family Dental Clinic Google Business Profile">
             <div className={styles.stars}>
               {Array.from({ length: 5 }).map((_, index) => (
                 <FaStar key={index} />
               ))}
             </div>
-            <strong>Patient-focused care</strong>
-            <span>Clear guidance at every step</span>
-          </div>
+            <strong><FaGoogle /> Verified Google profile</strong>
+            <span>Reviews, photos &amp; directions</span>
+          </a>
 
           <div className={styles.hoursCard}>
             <FaClock />
             <div>
               <span>Siwan clinic hours</span>
-              <strong>9:00 AM – 8:00 PM</strong>
+              <strong>Mon–Sat: 9 AM – 7 PM</strong>
             </div>
           </div>
 

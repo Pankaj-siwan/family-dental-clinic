@@ -49,24 +49,25 @@ const structuredData = {
         latitude: 26.227535,
         longitude: 84.3664122,
       },
-      openingHoursSpecification: {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: [
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-          "Saturday",
-          "Sunday",
-        ],
-        opens: "09:00",
-        closes: "20:00",
-      },
+      openingHoursSpecification: [
+        {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+          opens: "09:00",
+          closes: "19:00",
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: "Sunday",
+          opens: "10:30",
+          closes: "17:30",
+        },
+      ],
       areaServed: ["Siwan", "Fatehpur", "Andar"],
       hasMap:
         "https://www.google.com/maps?cid=17443801916793355859",
       sameAs: [
+        "https://www.google.com/maps?cid=17443801916793355859",
         "https://www.youtube.com/channel/UCkLt6fDcwJIlK8I2k8aKLqQ",
         "https://www.youtube.com/channel/UCsxsonS_6WkvUG3dYPL5IPQ",
       ],
@@ -84,6 +85,18 @@ const structuredData = {
         "Dentures",
         "Teeth whitening",
       ],
+      contactPoint: {
+        "@type": "ContactPoint",
+        telephone: "+91-86185-28975",
+        contactType: "appointments",
+        areaServed: "IN-BR",
+        availableLanguage: ["English", "Hindi"],
+      },
+      potentialAction: {
+        "@type": "ReserveAction",
+        target: `${siteUrl}/#appointment`,
+        name: "Book a dental appointment",
+      },
     },
     {
       "@type": "Person",
@@ -113,52 +126,6 @@ const structuredData = {
       publisher: { "@id": `${siteUrl}/#clinic` },
       inLanguage: ["en-IN", "hi-IN"],
     },
-    {
-      "@type": "FAQPage",
-      "@id": `${siteUrl}/#faq`,
-      mainEntity: [
-        {
-          "@type": "Question",
-          name: "Is root canal treatment painful?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Root canal treatment is performed under local anaesthesia. Most patients feel pressure rather than pain.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "How do I know whether I need a dental implant?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "A clinical examination and appropriate radiographs are required before implant treatment can be planned.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "How often should I have a dental check-up?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Many patients benefit from a dental examination every six months, although the interval may vary.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "Do you provide dental care for children?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Yes. Examination, preventive care, fillings, and oral-habit advice are available for children.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "What should I do during a dental emergency?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Call the clinic as soon as possible for severe pain, swelling, bleeding, trauma, or a knocked-out tooth.",
-          },
-        },
-      ],
-    },
   ],
 };
 
@@ -179,6 +146,11 @@ export default function Home() {
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
         <link rel="canonical" href={`${siteUrl}/`} />
         <link rel="alternate" hrefLang="en-IN" href={`${siteUrl}/`} />
+        <link rel="me" href="https://www.google.com/maps?cid=17443801916793355859" />
+        <meta name="geo.region" content="IN-BR" />
+        <meta name="geo.placename" content="Siwan" />
+        <meta name="geo.position" content="26.227535;84.3664122" />
+        <meta name="ICBM" content="26.227535, 84.3664122" />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_IN" />
         <meta property="og:site_name" content="Family Dental Clinic & Implant Center" />

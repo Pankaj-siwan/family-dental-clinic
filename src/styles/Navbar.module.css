@@ -35,6 +35,12 @@
   text-decoration: none;
 }
 
+.topActions {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
 .nav {
   display: flex;
   width: min(var(--page-max), 100%);
@@ -191,6 +197,11 @@
     display: none;
   }
 
+  .topActions {
+    width: 100%;
+    justify-content: center;
+  }
+
   .nav {
     min-height: 84px;
     padding: 0 16px;
@@ -231,6 +242,12 @@
 
   .bookButton {
     margin-top: 4px;
+  }
+}
+
+@media (max-width: 520px) {
+  .topActions a:first-child {
+    display: none;
   }
 }
 

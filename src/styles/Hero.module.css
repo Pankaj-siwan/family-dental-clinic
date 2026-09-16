@@ -334,9 +334,23 @@
 .ratingCard {
   top: 20px;
   right: 0;
+  display: block;
   width: 220px;
   padding: 18px;
   border-radius: 18px;
+  text-decoration: none;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.ratingCard:hover,
+.ratingCard:focus-visible {
+  box-shadow: 0 24px 54px rgba(15, 42, 67, 0.23);
+  transform: translateY(-3px);
+}
+
+.ratingCard:focus-visible {
+  outline: 3px solid rgba(8, 145, 178, 0.35);
+  outline-offset: 3px;
 }
 
 .stars {
@@ -355,6 +369,12 @@
 .ratingCard strong {
   color: #17384d;
   font-size: 0.87rem;
+}
+
+.ratingCard strong svg {
+  margin-right: 6px;
+  color: #4285f4;
+  vertical-align: -0.1em;
 }
 
 .ratingCard span {

@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   FaBars,
   FaCalendarCheck,
+  FaGoogle,
   FaMapMarkerAlt,
   FaPhoneAlt,
   FaTimes,
@@ -30,9 +31,10 @@ export default function Navbar() {
           <span>
             <FaMapMarkerAlt /> Serving Siwan, Andar and nearby areas
           </span>
-          <a href="tel:+918618528975">
-            <FaPhoneAlt /> +91 86185 28975
-          </a>
+          <div className={styles.topActions}>
+            <a href="https://www.google.com/maps?cid=17443801916793355859" target="_blank" rel="noopener noreferrer"><FaGoogle /> Verified Google Profile</a>
+            <a href="tel:+918618528975"><FaPhoneAlt /> +91 86185 28975</a>
+          </div>
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   FaFacebookF,
+  FaGoogle,
   FaInstagram,
   FaPhoneAlt,
   FaTooth,
@@ -89,6 +90,15 @@ export default function Footer() {
             >
               <FaWhatsapp />
               WhatsApp appointment
+            </a>
+
+            <a
+              href="https://www.google.com/maps?cid=17443801916793355859"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FaGoogle />
+              Google profile, reviews &amp; directions
             </a>
 
             <p>
