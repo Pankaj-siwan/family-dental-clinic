@@ -25,6 +25,8 @@ export type WebsiteArticle = {
   title: string;
   summary: string;
   author: string;
+  contentHtml: string;
+  coverImageUrl: string;
   blocks: ArticleBlock[];
   published: boolean;
   createdAt?: Timestamp | null;
@@ -60,6 +62,8 @@ function fromDocument(id: string, data: DocumentData): WebsiteArticle {
     title: String(data.title ?? ""),
     summary: String(data.summary ?? data.excerpt ?? ""),
     author: String(data.author ?? data.doctor ?? "From our doctors"),
+    contentHtml: String(data.contentHtml ?? ""),
+    coverImageUrl: String(data.coverImageUrl ?? data.imageUrl ?? data.photoUrl ?? ""),
     blocks,
     published: data.published === true,
     createdAt: data.createdAt instanceof Timestamp ? data.createdAt : null,
@@ -72,6 +76,8 @@ function clean(input: WebsiteArticleInput): WebsiteArticleInput {
     title: input.title.trim(),
     summary: input.summary.trim(),
     author: input.author.trim(),
+    contentHtml: input.contentHtml.trim(),
+    coverImageUrl: input.coverImageUrl.trim(),
     published: input.published,
     blocks: input.blocks.map((block) => block.type === "image"
       ? { ...block, alt: block.alt.trim(), caption: block.caption.trim() }

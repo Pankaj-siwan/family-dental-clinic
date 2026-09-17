@@ -28,7 +28,7 @@ export default function FromTheDoctors() {
       const items = snapshot.docs.map((doc) => {
         const data = doc.data();
         const firstImage = Array.isArray(data.blocks) ? data.blocks.find((block: { type?: unknown; url?: unknown }) => block?.type === "image" && block?.url) : null;
-        return { id: doc.id, title: String(data.title ?? "Dental guidance"), summary: String(data.summary ?? data.excerpt ?? data.content ?? "").slice(0, 260), doctor: String(data.doctor ?? data.author ?? "From our doctors"), imageUrl: String(firstImage?.url ?? data.imageUrl ?? data.photoUrl ?? ""), dynamic: true };
+        return { id: doc.id, title: String(data.title ?? "Dental guidance"), summary: String(data.summary ?? data.excerpt ?? data.content ?? "").slice(0, 260), doctor: String(data.doctor ?? data.author ?? "From our doctors"), imageUrl: String(data.coverImageUrl ?? firstImage?.url ?? data.imageUrl ?? data.photoUrl ?? ""), dynamic: true };
       });
       if (items.length) setArticles(items.slice(0, 4));
     }, () => undefined);

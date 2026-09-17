@@ -1,110 +1,79 @@
-import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
-import Image from "next/image";
-import { FaArrowDown, FaArrowUp, FaEye, FaEyeSlash, FaFloppyDisk, FaHeading, FaImage, FaPen, FaPlus, FaTrash, FaXmark } from "react-icons/fa6";
-import { ArticleBlock, createArticle, deleteArticle, getArticles, updateArticle, WebsiteArticle, WebsiteArticleInput } from "@/lib/articles";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
+import { FaBold, FaEye, FaEyeSlash, FaFloppyDisk, FaImage, FaItalic, FaPen, FaTrash, FaXmark } from "react-icons/fa6";
+import { createArticle, deleteArticle, getArticles, updateArticle, WebsiteArticle, WebsiteArticleInput } from "@/lib/articles";
 import { uploadToCloudinary } from "@/lib/cloudinary";
 import styles from "./ArticleAdmin.module.css";
 
-const emptyForm: WebsiteArticleInput = { title: "", summary: "", author: "Dr. Pankaj & Dr. Anita", blocks: [], published: true };
-const newId = () => `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+const emptyForm: WebsiteArticleInput = { title: "", summary: "", author: "Dr. Pankaj & Dr. Anita", contentHtml: "", coverImageUrl: "", blocks: [], published: true };
 const messageFrom = (error: unknown) => error instanceof Error ? error.message : "An unexpected error occurred.";
+
+function legacyHtml(article: WebsiteArticle) {
+  if (article.contentHtml) return article.contentHtml;
+  return article.blocks.map((block) => block.type === "heading" ? `<h2>${block.text}</h2>` : block.type === "paragraph" ? `<p>${block.text}</p>` : `<figure><img src="${block.url}" alt="${block.alt}">${block.caption ? `<figcaption>${block.caption}</figcaption>` : ""}</figure>`).join("");
+}
+
+function cleanHtml(html: string) {
+  const copy = new DOMParser().parseFromString(html, "text/html");
+  copy.querySelectorAll("script,style,iframe,object,embed").forEach((node) => node.remove());
+  copy.body.querySelectorAll("*").forEach((node) => [...node.attributes].forEach((attribute) => {
+    if (attribute.name.toLowerCase().startsWith("on") || attribute.value.trim().toLowerCase().startsWith("javascript:")) node.removeAttribute(attribute.name);
+  }));
+  return copy.body.innerHTML;
+}
 
 export default function ArticleAdmin() {
   const [articles, setArticles] = useState<WebsiteArticle[]>([]);
   const [form, setForm] = useState<WebsiteArticleInput>(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [preview, setPreview] = useState(false);
-  const [error, setError] = useState("");
   const [message, setMessage] = useState("");
-  const published = useMemo(() => articles.filter((item) => item.published).length, [articles]);
+  const [error, setError] = useState("");
+  const editorRef = useRef<HTMLDivElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const savedRange = useRef<Range | null>(null);
 
-  async function load() {
-    try { setLoading(true); setArticles(await getArticles()); }
-    catch (err) { setError(messageFrom(err)); }
-    finally { setLoading(false); }
-  }
-
+  async function load() { try { setArticles(await getArticles()); } catch (err) { setError(messageFrom(err)); } }
   useEffect(() => {
-    // Initial synchronization with the secured Firestore collection.
+    // Initial synchronization with the secured article collection.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void load();
   }, []);
-
-  function reset() { setForm(emptyForm); setEditingId(null); setPreview(false); setError(""); setMessage(""); }
-  function addTextBlock(type: "heading" | "paragraph") {
-    setForm((current) => ({ ...current, blocks: [...current.blocks, { id: newId(), type, text: "" }] }));
+  function setEditor(html: string) { if (editorRef.current) editorRef.current.innerHTML = html; }
+  function syncEditor() { setForm((current) => ({ ...current, contentHtml: editorRef.current?.innerHTML ?? "" })); }
+  function rememberCursor() { const selection = window.getSelection(); if (selection?.rangeCount && editorRef.current?.contains(selection.anchorNode)) savedRange.current = selection.getRangeAt(0).cloneRange(); }
+  function restoreCursor() { const selection = window.getSelection(); if (!selection || !savedRange.current) { editorRef.current?.focus(); return; } selection.removeAllRanges(); selection.addRange(savedRange.current); }
+  function format(command: "bold" | "italic") { restoreCursor(); document.execCommand(command); syncEditor(); rememberCursor(); }
+  function reset() { setForm(emptyForm); setEditingId(null); setError(""); setMessage(""); setEditor(""); }
+  function edit(article: WebsiteArticle) {
+    const html = legacyHtml(article);
+    setEditingId(article.id); setForm({ title: article.title, summary: article.summary, author: article.author, contentHtml: html, coverImageUrl: article.coverImageUrl || article.blocks.find((b) => b.type === "image")?.url || "", blocks: article.blocks, published: article.published });
+    requestAnimationFrame(() => setEditor(html)); window.scrollTo({ top: 0, behavior: "smooth" });
   }
-  function updateBlock(index: number, patch: Partial<ArticleBlock>) {
-    setForm((current) => ({ ...current, blocks: current.blocks.map((block, i) => i === index ? ({ ...block, ...patch } as ArticleBlock) : block) }));
+  async function insertPhoto(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]; if (!file) return;
+    try { setUploading(true); setError(""); const result = await uploadToCloudinary(file); restoreCursor(); document.execCommand("insertHTML", false, `<figure><img src="${result.secure_url}" alt="Dental article photograph"><figcaption></figcaption></figure><p><br></p>`); setForm((current) => ({ ...current, contentHtml: editorRef.current?.innerHTML ?? current.contentHtml, coverImageUrl: current.coverImageUrl || result.secure_url })); setMessage("Photo inserted at the cursor position."); }
+    catch (err) { setError(messageFrom(err)); } finally { event.target.value = ""; setUploading(false); }
   }
-  function removeBlock(index: number) { setForm((current) => ({ ...current, blocks: current.blocks.filter((_, i) => i !== index) })); }
-  function moveBlock(index: number, direction: -1 | 1) {
-    const target = index + direction;
-    if (target < 0 || target >= form.blocks.length) return;
-    setForm((current) => { const blocks = [...current.blocks]; [blocks[index], blocks[target]] = [blocks[target], blocks[index]]; return { ...current, blocks }; });
-  }
-
-  async function addImage(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    try {
-      setUploading(true); setError("");
-      const uploaded = await uploadToCloudinary(file);
-      setForm((current) => ({ ...current, blocks: [...current.blocks, { id: newId(), type: "image", url: uploaded.secure_url, publicId: uploaded.public_id, alt: current.title || "Dental article photograph", caption: "" }] }));
-      setMessage("Photo inserted at the end of the article. Use the arrows to position it.");
-    } catch (err) { setError(messageFrom(err)); }
-    finally { event.target.value = ""; setUploading(false); }
-  }
-
   async function save(event: FormEvent) {
-    event.preventDefault();
+    event.preventDefault(); const html = cleanHtml(editorRef.current?.innerHTML ?? ""); const plainText = editorRef.current?.innerText.trim() ?? "";
     if (!form.title.trim() || !form.summary.trim()) { setError("Article title and short summary are required."); return; }
-    const meaningful = form.blocks.filter((block) => block.type === "image" || block.text.trim());
-    if (!meaningful.length) { setError("Add at least one paragraph, heading or photo inside the article."); return; }
-    try {
-      setSaving(true); setError("");
-      const payload = { ...form, blocks: meaningful };
-      if (editingId) { await updateArticle(editingId, payload); setMessage("Article updated successfully."); }
-      else { await createArticle(payload); setMessage("Article saved successfully."); }
-      setForm(emptyForm); setEditingId(null); setPreview(false); await load();
-    } catch (err) { setError(messageFrom(err)); }
-    finally { setSaving(false); }
+    if (!plainText && !html.includes("<img")) { setError("Please write the article before publishing it."); return; }
+    const payload = { ...form, contentHtml: html };
+    try { setSaving(true); setError(""); if (editingId) { await updateArticle(editingId, payload); setMessage("Article updated successfully."); } else { await createArticle(payload); setMessage("Article published successfully."); } reset(); await load(); }
+    catch (err) { setError(messageFrom(err)); } finally { setSaving(false); }
   }
+  async function toggle(article: WebsiteArticle) { await updateArticle(article.id, { title: article.title, summary: article.summary, author: article.author, contentHtml: legacyHtml(article), coverImageUrl: article.coverImageUrl, blocks: article.blocks, published: !article.published }); await load(); }
+  async function remove(article: WebsiteArticle) { if (!window.confirm(`Delete “${article.title}” permanently?`)) return; await deleteArticle(article.id); if (editingId === article.id) reset(); await load(); }
 
-  function edit(item: WebsiteArticle) {
-    setEditingId(item.id); setForm({ title: item.title, summary: item.summary, author: item.author, blocks: item.blocks, published: item.published });
-    setPreview(false); window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  async function toggle(item: WebsiteArticle) { await updateArticle(item.id, { title: item.title, summary: item.summary, author: item.author, blocks: item.blocks, published: !item.published }); await load(); }
-  async function remove(item: WebsiteArticle) { if (!window.confirm(`Delete “${item.title}” permanently?`)) return; await deleteArticle(item.id); if (editingId === item.id) reset(); await load(); }
-
-  return <div className={styles.root}>
-    <section className={styles.stats}><article><strong>{articles.length}</strong><span>Total articles</span></article><article><strong>{published}</strong><span>Published</span></article><article><strong>{articles.length - published}</strong><span>Hidden drafts</span></article></section>
-    <section className={styles.panel}>
-      <div className={styles.heading}><div><span>Website article editor</span><h2>{editingId ? "Edit article" : "Write a new article"}</h2></div>{editingId && <button className={styles.button} type="button" onClick={reset}><FaXmark/> Cancel</button>}</div>
-      {error && <div className={`${styles.alert} ${styles.error}`}>{error}</div>}{message && <div className={`${styles.alert} ${styles.success}`}>{message}</div>}
-      <form onSubmit={save}>
-        <div className={styles.grid}>
-          <label>Article title *<input value={form.title} onChange={(e) => setForm({...form,title:e.target.value})} placeholder="Example: Why a root canal saves your tooth"/></label>
-          <label>Author<input value={form.author} onChange={(e) => setForm({...form,author:e.target.value})}/></label>
-          <label className={styles.wide}>Short summary *<textarea value={form.summary} onChange={(e) => setForm({...form,summary:e.target.value})} placeholder="This appears on the website article card."/></label>
-        </div>
-        <div className={styles.composer}>
-          <div className={styles.composerTitle}><h3>Article content</h3><div className={styles.addMenu}><button className={styles.button} type="button" onClick={() => addTextBlock("heading")}><FaHeading/> Heading</button><button className={styles.button} type="button" onClick={() => addTextBlock("paragraph")}><FaPlus/> Paragraph</button></div></div>
-          {form.blocks.map((block,index) => <div className={styles.block} key={block.id}>
-            <div className={styles.blockHeader}><span>{block.type === "image" ? "Photo inside article" : block.type}</span><div className={styles.blockActions}><button className={styles.iconButton} type="button" onClick={() => moveBlock(index,-1)} disabled={index===0} aria-label="Move up"><FaArrowUp/></button><button className={styles.iconButton} type="button" onClick={() => moveBlock(index,1)} disabled={index===form.blocks.length-1} aria-label="Move down"><FaArrowDown/></button><button className={`${styles.iconButton} ${styles.danger}`} type="button" onClick={() => removeBlock(index)} aria-label="Remove"><FaTrash/></button></div></div>
-            {block.type === "image" ? <div className={styles.imagePreview}><Image src={block.url} alt={block.alt} width={300} height={220}/><div className={styles.imageFields}><label>Photo description (for accessibility)<input value={block.alt} onChange={(e)=>updateBlock(index,{alt:e.target.value})}/></label><label>Optional caption<input value={block.caption} onChange={(e)=>updateBlock(index,{caption:e.target.value})}/></label></div></div> : <textarea rows={block.type === "heading" ? 2 : 6} value={block.text} placeholder={block.type === "heading" ? "Section heading" : "Write the paragraph here..."} onChange={(e)=>updateBlock(index,{text:e.target.value})}/>} 
-          </div>)}
-          <label className={styles.upload}><FaImage/> {uploading ? "Uploading photo..." : "Insert a photo inside this article"}<input type="file" accept="image/*" onChange={addImage} disabled={uploading}/></label>
-        </div>
-        <div className={styles.footer}><label className={styles.publish}><input type="checkbox" checked={form.published} onChange={(e)=>setForm({...form,published:e.target.checked})}/> Publish on website</label><div className={styles.addMenu}><button className={styles.button} type="button" onClick={()=>setPreview(!preview)}><FaEye/> {preview ? "Hide preview" : "Preview"}</button><button className={`${styles.button} ${styles.primary}`} disabled={saving}><FaFloppyDisk/> {saving ? "Saving..." : editingId ? "Update article" : "Save article"}</button></div></div>
-      </form>
-      {preview && <div className={styles.preview}><h1>{form.title || "Article title"}</h1><p className={styles.previewLead}>{form.summary}</p><div className={styles.previewBody}>{form.blocks.map((block) => block.type === "heading" ? <h2 key={block.id}>{block.text}</h2> : block.type === "paragraph" ? <p key={block.id}>{block.text}</p> : <figure key={block.id}><Image src={block.url} alt={block.alt} width={900} height={600}/>{block.caption && <figcaption>{block.caption}</figcaption>}</figure>)}</div></div>}
-    </section>
-    <section className={styles.panel}><div className={styles.listHeader}><h2>Saved articles</h2><button className={styles.button} type="button" onClick={()=>void load()}>Refresh</button></div>{loading ? <p className={styles.empty}>Loading articles…</p> : !articles.length ? <p className={styles.empty}>No articles saved yet.</p> : <div className={styles.articleList}>{articles.map((item)=><article className={styles.articleRow} key={item.id}><div className={styles.articleInfo}><strong>{item.title}</strong><span>{item.published ? "Published" : "Hidden draft"} · {item.blocks.filter((b)=>b.type==="image").length} photo(s) inside</span></div><div className={styles.rowActions}><button className={styles.iconButton} type="button" onClick={()=>edit(item)} aria-label="Edit"><FaPen/></button><button className={styles.iconButton} type="button" onClick={()=>void toggle(item)} aria-label={item.published?"Hide":"Publish"}>{item.published?<FaEyeSlash/>:<FaEye/>}</button><button className={`${styles.iconButton} ${styles.danger}`} type="button" onClick={()=>void remove(item)} aria-label="Delete"><FaTrash/></button></div></article>)}</div>}</section>
+  return <div className={styles.root}><section className={styles.paperPanel}>
+    <div className={styles.topline}><div><span>Word-style article editor</span><h2>{editingId ? "Edit article" : "Write a new article"}</h2></div>{editingId && <button className={styles.secondary} type="button" onClick={reset}><FaXmark/> Cancel</button>}</div>
+    {error && <div className={`${styles.alert} ${styles.error}`}>{error}</div>}{message && <div className={`${styles.alert} ${styles.success}`}>{message}</div>}
+    <form onSubmit={save}><div className={styles.details}><label>Article title *<input value={form.title} onChange={(e)=>setForm({...form,title:e.target.value})} placeholder="Write the article title"/></label><label>Author<input value={form.author} onChange={(e)=>setForm({...form,author:e.target.value})}/></label><label className={styles.wide}>Short summary *<textarea value={form.summary} onChange={(e)=>setForm({...form,summary:e.target.value})} placeholder="A short introduction shown on the homepage"/></label></div>
+      <div className={styles.toolbar}><button type="button" onMouseDown={(e)=>{e.preventDefault();format("bold");}}><FaBold/> Bold</button><button type="button" onMouseDown={(e)=>{e.preventDefault();format("italic");}}><FaItalic/> Italic</button><button type="button" onMouseDown={(e)=>{e.preventDefault();rememberCursor();imageInputRef.current?.click();}} disabled={uploading}><FaImage/> {uploading ? "Uploading…" : "Insert photo"}</button><input ref={imageInputRef} className={styles.hiddenInput} type="file" accept="image/*" onChange={insertPhoto}/></div>
+      <div ref={editorRef} className={styles.editor} contentEditable suppressContentEditableWarning onInput={syncEditor} onKeyUp={rememberCursor} onMouseUp={rememberCursor} data-placeholder="Start writing your article here…" />
+      <div className={styles.footer}><label><input type="checkbox" checked={form.published} onChange={(e)=>setForm({...form,published:e.target.checked})}/> Publish on website</label><button className={styles.primary} disabled={saving}><FaFloppyDisk/> {saving ? "Saving…" : editingId ? "Update article" : "Publish article"}</button></div>
+    </form></section>
+    <section className={styles.listPanel}><h2>Saved articles</h2>{!articles.length ? <p>No articles saved yet.</p> : <div className={styles.list}>{articles.map((article)=><article key={article.id}><div><strong>{article.title}</strong><span>{article.published ? "Published" : "Hidden draft"}</span></div><div className={styles.rowActions}><button type="button" onClick={()=>edit(article)}><FaPen/></button><button type="button" onClick={()=>void toggle(article)}>{article.published?<FaEyeSlash/>:<FaEye/>}</button><button type="button" onClick={()=>void remove(article)}><FaTrash/></button></div></article>)}</div>}</section>
   </div>;
 }
