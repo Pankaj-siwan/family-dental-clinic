@@ -1,6 +1,7 @@
 .toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:7px;overflow:visible!important;padding:10px!important}
 .toolbar select{height:40px;max-width:170px;padding:0 9px;border:1px solid #d4e2e1;border-radius:8px;background:#fff;color:#244f5c;font:inherit;font-size:.78rem;font-weight:700}
 .toolbar button{min-width:40px;height:40px;padding:0 10px!important;font-size:.76rem;white-space:nowrap}
+.toolbar .activeTool{border-color:#0f766e;background:#0f766e;color:#fff}.drawing{position:relative;cursor:crosshair!important;user-select:none}.draftBox{position:absolute;display:block;border:2px dashed #0f766e;background:rgba(15,118,110,.1);pointer-events:none;z-index:5}
 .colorTool{display:inline-flex;align-items:center;justify-content:center;gap:4px;height:40px;padding:5px 9px;border:1px solid #d4e2e1;border-radius:8px;background:#fff;color:#244f5c;font-weight:900}
 .colorTool input{width:23px;height:23px;padding:0;border:0;background:transparent;cursor:pointer}
 .aiPanel{max-width:900px;margin:18px auto 0;padding:18px;border:1px solid #b7dbd5;border-radius:15px;background:linear-gradient(135deg,#effbf8,#f3f8ff)}

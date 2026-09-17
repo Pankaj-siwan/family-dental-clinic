@@ -25,7 +25,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         model: process.env.OPENAI_ARTICLE_MODEL || "gpt-5.6-luna",
         reasoning: { effort: "low" },
         max_output_tokens: 7000,
-        input: `You are a dental patient-education editor. Review the following article titled "${title}". Correct grammar and clarity without inventing clinical claims. Preserve every IMG element and its src exactly. Suggest several professional paragraph/photo arrangements. Return JSON only with keys: issues (array of concise strings), arrangements (array of concise strings), improvedHtml (safe article-body HTML using only p,h2,h3,strong,b,em,i,u,ul,ol,li,blockquote,figure,img,figcaption,div,br,span,a; no scripts, stylesheets, iframes or event handlers).\n\nARTICLE HTML:\n${html}`,
+        input: `You are a dental patient-education editor and editorial designer. Review the following article titled "${title}". Correct grammar and clarity without inventing clinical claims. Preserve every IMG element and its src exactly. Return at least four genuinely different professional arrangement suggestions describing paragraph order, headings, callout/text boxes, and exact photo placement. The improvedHtml should implement the strongest arrangement while retaining all images. Use only safe article-body HTML.\n\nARTICLE HTML:\n${html}`,
+        text: { format: { type: "json_schema", name: "article_review", strict: true, schema: { type: "object", additionalProperties: false, properties: { issues: { type: "array", items: { type: "string" } }, arrangements: { type: "array", minItems: 4, items: { type: "string" } }, improvedHtml: { type: "string" } }, required: ["issues", "arrangements", "improvedHtml"] } } },
       }),
     });
     const data = await response.json();
