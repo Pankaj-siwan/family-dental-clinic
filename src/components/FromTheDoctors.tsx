@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { FaBookOpen, FaCamera, FaExternalLinkAlt, FaQuoteLeft } from "react-icons/fa";
@@ -6,7 +7,7 @@ import DoctorVideos from "@/components/DoctorVideos";
 import { db } from "@/lib/firebase";
 import styles from "@/styles/FromTheDoctors.module.css";
 
-type Article = { id: string; title: string; summary: string; doctor: string; imageUrl: string };
+type Article = { id: string; title: string; summary: string; doctor: string; imageUrl: string; dynamic?: boolean };
 type GalleryItem = { id: string; title: string; caption: string; imageUrl: string };
 
 const fallbackArticles: Article[] = [
@@ -24,7 +25,8 @@ export default function FromTheDoctors() {
     const unsubscribeArticles = onSnapshot(articleQuery, (snapshot) => {
       const items = snapshot.docs.map((doc) => {
         const data = doc.data();
-        return { id: doc.id, title: String(data.title ?? "Dental guidance"), summary: String(data.summary ?? data.excerpt ?? data.content ?? "").slice(0, 260), doctor: String(data.doctor ?? data.author ?? "From our doctors"), imageUrl: String(data.imageUrl ?? data.photoUrl ?? "") };
+        const firstImage = Array.isArray(data.blocks) ? data.blocks.find((block: { type?: unknown; url?: unknown }) => block?.type === "image" && block?.url) : null;
+        return { id: doc.id, title: String(data.title ?? "Dental guidance"), summary: String(data.summary ?? data.excerpt ?? data.content ?? "").slice(0, 260), doctor: String(data.doctor ?? data.author ?? "From our doctors"), imageUrl: String(firstImage?.url ?? data.imageUrl ?? data.photoUrl ?? ""), dynamic: true };
       });
       if (items.length) setArticles(items.slice(0, 4));
     }, () => undefined);
@@ -46,7 +48,7 @@ export default function FromTheDoctors() {
           {articles.map((article) => (
             <article className={styles.article} key={article.id}>
               <div className={styles.articleImage}><Image src={article.imageUrl || "/images/clinic-front.jpg"} alt="" fill sizes="(max-width: 760px) 100vw, 340px" /></div>
-              <div><span><FaBookOpen /> Doctor&apos;s article</span><h3>{article.title}</h3><p>{article.summary}</p><strong>{article.doctor}</strong></div>
+              <div><span><FaBookOpen /> Doctor&apos;s article</span><h3>{article.title}</h3><p>{article.summary}</p><strong>{article.doctor}</strong>{article.dynamic && <Link href={`/articles/${article.id}`}>Read full article <FaExternalLinkAlt /></Link>}</div>
             </article>
           ))}
         </div>

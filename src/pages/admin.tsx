@@ -15,6 +15,7 @@ import {
 
 import { auth } from "@/lib/firebase";
 import ClinicalCaseAdmin from "@/components/ClinicalCaseAdmin";
+import ArticleAdmin from "@/components/ArticleAdmin";
 
 
 
@@ -28,6 +29,7 @@ export default function AdminPage() {
   const [error, setError] = useState("");
   const [loggingIn, setLoggingIn] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [adminSection, setAdminSection] = useState<"cases" | "articles">("articles");
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -136,7 +138,11 @@ export default function AdminPage() {
               </button>
             </div>
 
-<ClinicalCaseAdmin />
+            <nav className="adminTabs" aria-label="Website administration sections">
+              <button type="button" className={adminSection === "articles" ? "active" : ""} onClick={() => setAdminSection("articles")}>Articles</button>
+              <button type="button" className={adminSection === "cases" ? "active" : ""} onClick={() => setAdminSection("cases")}>Clinical cases</button>
+            </nav>
+            {adminSection === "articles" ? <ArticleAdmin /> : <ClinicalCaseAdmin />}
           </section>
         ) : (
           <section className="loginCard">
@@ -243,6 +249,33 @@ export default function AdminPage() {
           border-radius: 999px;
           filter: blur(1px);
           pointer-events: none;
+        }
+
+        .adminTabs {
+          display: flex;
+          gap: 8px;
+          margin: 24px 0;
+          padding: 6px;
+          border: 1px solid rgba(15, 118, 110, 0.14);
+          border-radius: 16px;
+          background: #edf7f6;
+        }
+
+        .adminTabs button {
+          flex: 1;
+          padding: 12px 18px;
+          border: 0;
+          border-radius: 11px;
+          background: transparent;
+          color: #496774;
+          font-weight: 800;
+          cursor: pointer;
+        }
+
+        .adminTabs button.active {
+          background: #0f766e;
+          color: #fff;
+          box-shadow: 0 8px 20px rgba(15, 118, 110, 0.2);
         }
 
         .shapeOne {
