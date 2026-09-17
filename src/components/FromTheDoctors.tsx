@@ -6,6 +6,7 @@ import { FaBookOpen, FaCamera, FaExternalLinkAlt, FaQuoteLeft } from "react-icon
 import DoctorVideos from "@/components/DoctorVideos";
 import { db } from "@/lib/firebase";
 import styles from "@/styles/FromTheDoctors.module.css";
+import { useSiteContent } from "@/lib/siteContent";
 
 type Article = { id: string; title: string; summary: string; doctor: string; imageUrl: string; dynamic?: boolean };
 type GalleryItem = { id: string; title: string; caption: string; imageUrl: string };
@@ -16,6 +17,7 @@ const fallbackArticles: Article[] = [
 ];
 
 export default function FromTheDoctors() {
+  const content = useSiteContent();
   const [articles, setArticles] = useState<Article[]>(fallbackArticles);
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
 
@@ -40,8 +42,8 @@ export default function FromTheDoctors() {
     <section className={styles.section} id="from-the-doctors">
       <div className={styles.container}>
         <header className={styles.heading}>
-          <div><span className={styles.eyebrow}><FaQuoteLeft /> From the Doctors</span><h2>Reliable guidance, shared personally</h2></div>
-          <p>Written articles, informative videos and photographs from Dr. Pankaj and Dr. Anita—created to help families make better oral-health decisions.</p>
+          <div><span className={styles.eyebrow}><FaQuoteLeft /> {content.doctorsEyebrow}</span><h2>{content.doctorsTitle}</h2></div>
+          <p>{content.doctorsIntro}</p>
         </header>
 
         <div className={styles.articleGrid}>

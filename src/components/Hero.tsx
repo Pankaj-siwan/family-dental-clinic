@@ -13,14 +13,10 @@ import {
   FaWhatsapp,
 } from "react-icons/fa";
 import styles from "@/styles/Hero.module.css";
-
-const highlights = [
-  "Complete family dental care",
-  "Modern treatment planning",
-  "Patient-first clinical approach",
-];
+import { useSiteContent } from "@/lib/siteContent";
 
 export default function Hero() {
+  const content = useSiteContent();
   return (
     <section className={styles.hero} id="home">
       <div className={styles.orbOne} />
@@ -34,7 +30,7 @@ export default function Hero() {
           transition={{ duration: 0.7, ease: "easeOut" }}
         >
           <div className={styles.eyebrow}>
-            <FaShieldAlt /> Trusted dental care in Siwan
+            <FaShieldAlt /> {content.heroEyebrow}
           </div>
 
           <h1 className={styles.title}>
@@ -44,7 +40,7 @@ export default function Hero() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.7, delay: 0.18, ease: "easeOut" }}
             >
-              Family Dental Clinic
+              {content.heroTitle}
             </motion.span>
             <motion.span
               className={styles.accentTitleLine}
@@ -52,17 +48,16 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.42, ease: "easeOut" }}
             >
-              &amp; Implant Center
+              {content.heroAccent}
             </motion.span>
           </h1>
 
           <p className={styles.tagline}>
-            Fulfilling your dental needs in and around Siwan with thoughtful,
-            modern and dependable dental care for every member of your family.
+            {content.heroTagline}
           </p>
 
           <div className={styles.highlights}>
-            {highlights.map((item) => (
+            {content.heroHighlights.map((item) => (
               <span key={item}>
                 <FaCheckCircle /> {item}
               </span>

@@ -7,13 +7,7 @@ import {
   FaUserMd,
 } from "react-icons/fa";
 import styles from "@/styles/AboutClinic.module.css";
-
-const highlights = [
-  "Personalized treatment planning",
-  "Modern and patient-friendly dental care",
-  "Clear explanation before every procedure",
-  "Strict sterilization and hygiene protocols",
-];
+import { useSiteContent } from "@/lib/siteContent";
 
 const expertise = [
   {
@@ -39,6 +33,7 @@ const expertise = [
 ];
 
 export default function AboutClinic() {
+  const content = useSiteContent();
   return (
     <section className={styles.section} id="about">
       <div className={styles.container}>
@@ -70,29 +65,24 @@ export default function AboutClinic() {
         <div className={styles.contentColumn}>
           <div className={styles.eyebrow}>
             <FaUserMd />
-            About Our Clinic
+            {content.aboutEyebrow}
           </div>
 
           <h2>
-            Compassionate dentistry with a
-            <span> modern clinical approach</span>
+            {content.aboutTitle}
+            <span> {content.aboutAccent}</span>
           </h2>
 
           <p className={styles.lead}>
-            Family Dental Clinic &amp; Implant Center is committed to providing
-            dependable dental care in a comfortable and reassuring environment.
-            Every treatment begins with careful examination, honest discussion,
-            and a plan tailored to the patient’s needs.
+            {content.aboutLead}
           </p>
 
           <p className={styles.bodyText}>
-            Our focus is not only on treating dental problems, but also on
-            helping patients understand their oral health and make confident
-            decisions about treatment.
+            {content.aboutBody}
           </p>
 
           <div className={styles.checkList}>
-            {highlights.map((item) => (
+            {content.aboutHighlights.map((item) => (
               <div className={styles.checkItem} key={item}>
                 <FaCheckCircle />
                 <span>{item}</span>

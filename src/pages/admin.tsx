@@ -16,6 +16,7 @@ import {
 import { auth } from "@/lib/firebase";
 import ClinicalCaseAdmin from "@/components/ClinicalCaseAdmin";
 import ArticleAdmin from "@/components/ArticleAdmin";
+import SiteContentAdmin from "@/components/SiteContentAdmin";
 
 
 
@@ -29,7 +30,7 @@ export default function AdminPage() {
   const [error, setError] = useState("");
   const [loggingIn, setLoggingIn] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
-  const [adminSection, setAdminSection] = useState<"cases" | "articles">("articles");
+  const [adminSection, setAdminSection] = useState<"content" | "cases" | "articles">("content");
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -139,10 +140,11 @@ export default function AdminPage() {
             </div>
 
             <nav className="adminTabs" aria-label="Website administration sections">
+              <button type="button" className={adminSection === "content" ? "active" : ""} onClick={() => setAdminSection("content")}>Website content</button>
               <button type="button" className={adminSection === "articles" ? "active" : ""} onClick={() => setAdminSection("articles")}>Articles</button>
               <button type="button" className={adminSection === "cases" ? "active" : ""} onClick={() => setAdminSection("cases")}>Clinical cases</button>
             </nav>
-            {adminSection === "articles" ? <ArticleAdmin /> : <ClinicalCaseAdmin />}
+            {adminSection === "content" ? <SiteContentAdmin /> : adminSection === "articles" ? <ArticleAdmin /> : <ClinicalCaseAdmin />}
           </section>
         ) : (
           <section className="loginCard">

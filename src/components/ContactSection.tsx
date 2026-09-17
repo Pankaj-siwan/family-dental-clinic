@@ -6,6 +6,7 @@ import {
   FaWhatsapp,
 } from "react-icons/fa";
 import styles from "@/styles/ContactSection.module.css";
+import { useSiteContent } from "@/lib/siteContent";
 
 const GOOGLE_MAP_URL =
   "https://google.com/maps/place/FAMILY+DENTAL+CLINIC+%26+IMPLANT+CENTRE+%5BDr.+Pankaj+(MDS);+Dr.+Anita+Kumari(BDS)%5D+(SIWAN)/data=!4m2!3m1!1s0x0:0xf214d56c0ebefe53?sa=X&ved=1t:2428&ictx=111";
@@ -14,24 +15,23 @@ const GOOGLE_MAP_EMBED_URL =
   "https://www.google.com/maps?q=FAMILY%20DENTAL%20CLINIC%20%26%20IMPLANT%20CENTRE%20%5BDr.%20Pankaj%20%28MDS%29%3B%20Dr.%20Anita%20Kumari%20%28BDS%29%5D%20%28SIWAN%29&output=embed";
 
 export default function ContactSection() {
+  const content = useSiteContent();
   return (
     <section className={styles.section} id="contact">
       <div className={styles.container}>
         <div className={styles.headingArea}>
           <span className={styles.eyebrow}>
             <FaMapMarkerAlt />
-            Visit Our Clinic
+            {content.contactEyebrow}
           </span>
 
           <h2>
-            Find Family Dental Clinic
-            <span> &amp; Implant Centre</span>
+            {content.contactTitle}
+            <span> {content.contactAccent}</span>
           </h2>
 
           <p>
-            Use the interactive Google Map for the clinic location, directions,
-            and nearby landmarks. Please call before visiting to confirm the
-            available appointment time.
+            {content.contactIntro}
           </p>
         </div>
 

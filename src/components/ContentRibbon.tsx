@@ -1,30 +1,10 @@
-import { useEffect, useState } from "react";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { FaRegStar } from "react-icons/fa";
-import { db } from "@/lib/firebase";
 import styles from "@/styles/ContentRibbon.module.css";
-
-const fallbackMessages = [
-  "Complete family dental care",
-  "Three convenient clinic locations",
-  "Dental implants and advanced treatment planning",
-  "Book an appointment online",
-];
+import { useSiteContent } from "@/lib/siteContent";
 
 export default function ContentRibbon() {
-  const [messages, setMessages] = useState(fallbackMessages);
-
-  useEffect(() => {
-    const ribbonQuery = query(collection(db, "website_ribbon"), where("active", "==", true));
-    return onSnapshot(ribbonQuery, (snapshot) => {
-      const liveMessages = snapshot.docs
-        .map((item) => String(item.data().text ?? item.data().message ?? "").trim())
-        .filter(Boolean);
-      if (liveMessages.length) setMessages(liveMessages);
-    }, () => undefined);
-  }, []);
-
-  const repeated = [...messages, ...messages];
+  const content = useSiteContent();
+  const repeated = [...content.ribbonMessages, ...content.ribbonMessages];
 
   return (
     <aside className={styles.ribbon} aria-label="Clinic updates">
