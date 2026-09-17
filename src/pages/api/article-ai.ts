@@ -25,15 +25,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         model: process.env.OPENAI_ARTICLE_MODEL || "gpt-5.6-luna",
         reasoning: { effort: "low" },
         max_output_tokens: 7000,
-        input: `You are a dental patient-education editor and editorial designer. Review the following article titled "${title}". Correct grammar and clarity without inventing clinical claims. Preserve every IMG element and its src exactly. Return at least four genuinely different professional arrangement suggestions describing paragraph order, headings, callout/text boxes, and exact photo placement. The improvedHtml should implement the strongest arrangement while retaining all images. Use only safe article-body HTML.\n\nARTICLE HTML:\n${html}`,
-        text: { format: { type: "json_schema", name: "article_review", strict: true, schema: { type: "object", additionalProperties: false, properties: { issues: { type: "array", items: { type: "string" } }, arrangements: { type: "array", minItems: 4, items: { type: "string" } }, improvedHtml: { type: "string" } }, required: ["issues", "arrangements", "improvedHtml"] } } },
+        input: `You are a dental patient-education editor and editorial designer. Review the following article titled "${title}". Correct grammar and clarity without inventing clinical claims. Return exactly three genuinely different, complete article arrangements: (1) a clean classic article, (2) a magazine-style article with useful callout or text boxes, and (3) an image-led article with professional photo placement. Every arrangement's html must contain the entire article, preserve every IMG element and its src exactly, and use only safe article-body HTML. Give each arrangement a short name and a clear one-sentence description of its design.\n\nARTICLE HTML:\n${html}`,
+        text: { format: { type: "json_schema", name: "article_review", strict: true, schema: { type: "object", additionalProperties: false, properties: { issues: { type: "array", items: { type: "string" } }, arrangements: { type: "array", minItems: 3, maxItems: 3, items: { type: "object", additionalProperties: false, properties: { name: { type: "string" }, description: { type: "string" }, html: { type: "string" } }, required: ["name", "description", "html"] } } }, required: ["issues", "arrangements"] } } },
       }),
     });
     const data = await response.json();
     if (!response.ok) return res.status(response.status).json({ error: data.error?.message || "OpenAI review failed." });
     const text = outputText(data).replace(/^```json\s*/i, "").replace(/```\s*$/, "").trim();
     const result = JSON.parse(text);
-    return res.status(200).json({ issues: Array.isArray(result.issues) ? result.issues : [], arrangements: Array.isArray(result.arrangements) ? result.arrangements : [], improvedHtml: String(result.improvedHtml ?? html) });
+    const rawArrangements: unknown[] = Array.isArray(result.arrangements) ? result.arrangements : [];
+    const arrangements = rawArrangements.slice(0, 3).map((item) => {
+      const option = typeof item === "object" && item ? item as Record<string, unknown> : {};
+      return { name: String(option.name ?? "Article layout"), description: String(option.description ?? "Professional article arrangement."), html: String(option.html ?? html) };
+    });
+    return res.status(200).json({ issues: Array.isArray(result.issues) ? result.issues : [], arrangements });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "AI review could not be completed." });
