@@ -50,7 +50,7 @@ export default function FromTheDoctors() {
           {articles.map((article) => (
             <article className={styles.article} key={article.id}>
               <div className={styles.articleImage}><Image src={article.imageUrl || "/images/clinic-front.jpg"} alt="" fill sizes="(max-width: 760px) 100vw, 340px" /></div>
-              <div><span><FaBookOpen /> Doctor&apos;s article</span><h3>{article.title}</h3><p>{article.summary}</p><strong>{article.doctor}</strong>{article.dynamic && <Link href={`/articles/${article.id}`}>Read full article <FaExternalLinkAlt /></Link>}</div>
+              <div><span><FaBookOpen /> Doctor&apos;s article</span><h3>{article.title}</h3>{article.summary && <p>{article.summary}</p>}<strong>{article.doctor}</strong>{article.dynamic && <Link href={`/articles/${article.id}`}>Read full article <FaExternalLinkAlt /></Link>}</div>
             </article>
           ))}
         </div>
