@@ -66,10 +66,6 @@ async function sendDoctorPush(db: FirebaseFirestore.Firestore, appointmentId: st
 
   const result = await getMessaging(getClinicManagerApp()).sendEachForMulticast({
     tokens,
-    notification: {
-      title: "New website appointment",
-      body: `${data.patientName} is asking for an appointment. Please confirm.`,
-    },
     data: {
       type: "website_appointment",
       appointmentId,
@@ -77,14 +73,15 @@ async function sendDoctorPush(db: FirebaseFirestore.Firestore, appointmentId: st
       clinicName: data.clinicName,
       appointmentDate: data.appointmentDate,
       appointmentTime: data.appointmentTime,
+      title: "New website appointment",
+      body: `${data.patientName} is asking for an appointment. Please confirm.`,
     },
     android: {
+      // Data-only + HIGH priority: Android delivers this to the app's
+      // FirebaseMessagingService instead of consuming it as a system
+      // notification while the app is backgrounded/terminated.
       priority: "high",
-      notification: {
-        sound: "default",
-        priority: "max",
-        visibility: "public",
-      },
+      ttl: 60 * 60 * 1000,
     },
   });
 
