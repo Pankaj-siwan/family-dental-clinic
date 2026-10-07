@@ -175,70 +175,19 @@ export async function getAvailableAppointmentSlots({
 }
 
 export async function createWebsiteAppointment(data: WebsiteAppointment) {
-  const { projectId, apiKey } = firebaseConfig();
-  const appointmentId = makeAppointmentId(data);
-  const clinicManagerDate = toClinicManagerDate(data.appointmentDate);
-
-  const recheckedSlots = await getAvailableAppointmentSlots({
-    clinicName: data.clinicName,
-    appointmentDate: data.appointmentDate,
-    allSlots: [data.appointmentTime],
-  });
-
-  if (!recheckedSlots.includes(data.appointmentTime)) {
-    throw new Error("This appointment time has just been taken. Please choose another available slot.");
-  }
-
-  const endpoint =
-    `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(projectId)}` +
-    `/databases/(default)/documents/appointments?documentId=${encodeURIComponent(appointmentId)}` +
-    `&key=${encodeURIComponent(apiKey)}`;
-
-  const response = await fetch(endpoint, {
+  // Appointment creation and FCM now happen together on the Vercel server.
+  // This avoids relying on Clinic Manager being open to notice a Firestore change.
+  const response = await fetch("/api/appointment-request", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      fields: {
-        patientName: firestoreValue(data.patientName),
-        patientMobile: firestoreValue(data.mobile),
-        mobile: firestoreValue(data.mobile),
-        age: firestoreValue(data.age),
-        gender: firestoreValue(data.gender),
-        clinicId: firestoreValue(data.clinicId),
-        clinicName: firestoreValue(data.clinicName),
-        clinicDisplayName: firestoreValue(data.clinicDisplayName ?? data.clinicName),
-        appointmentDate: firestoreValue(clinicManagerDate),
-        appointmentDateIso: firestoreValue(data.appointmentDate),
-        appointmentTime: firestoreValue(data.appointmentTime),
-        reason: firestoreValue(data.chiefComplaint),
-        chiefComplaint: firestoreValue(data.chiefComplaint),
-        doctorName: firestoreValue(data.clinicName.includes("Anita") ? "Dr. Anita Kumari" : "Dr. Pankaj"),
-        appointmentType: firestoreValue("Website appointment request"),
-        source: firestoreValue("website"),
-        status: firestoreValue("awaiting_confirmation"),
-        appointmentOpenStatus: firestoreValue("Pending confirmation"),
-        appointmentCompleted: firestoreValue(false),
-        appointmentClosed: firestoreValue(false),
-        doctorConfirmationRequired: firestoreValue(true),
-        notificationPending: firestoreValue(true),
-        notificationMessage: firestoreValue("A patient is trying to obtain the appointment"),
-        createdAt: { timestampValue: new Date().toISOString() },
-      },
-    }),
+    body: JSON.stringify(data),
   });
 
-  if (response.ok) return { appointmentId };
+  const body = await response.json().catch(() => null);
+  if (response.ok) return { appointmentId: String(body?.appointmentId ?? "") };
 
-  const errorBody = await response.json().catch(() => null);
-  const status = errorBody?.error?.status;
-
-  if (response.status === 409 || status === "ALREADY_EXISTS") {
-    throw new Error("An appointment request already exists for this patient, clinic, date, and time.");
+  if (response.status === 409) {
+    throw new Error(body?.error || "This appointment time has just been taken. Please choose another available slot.");
   }
-
-  if (status === "PERMISSION_DENIED") {
-    throw new Error("Website appointment saving is not enabled in Firebase. Update the Firestore rules.");
-  }
-
-  throw new Error(errorBody?.error?.message || "The appointment request could not be submitted. Please try again.");
+  throw new Error(body?.error || "The appointment request could not be submitted. Please try again.");
 }

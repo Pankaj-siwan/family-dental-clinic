@@ -1,0 +1,33 @@
+FAMILY DENTAL WEBSITE -> CLINIC MANAGER FCM (NO FIREBASE BLAZE REQUIRED)
+
+What changed
+- Website no longer creates the appointment directly from the browser.
+- POST /api/appointment-request securely creates it on Vercel.
+- The same server request immediately sends high-priority FCM to registered doctor devices.
+- Clinic Manager v3.3.7 already registers its FCM token in clinicManagerDevices.
+- Appointment remains saved even if push delivery temporarily fails.
+
+ONE-TIME VERCEL SECRET
+1. Firebase Console -> clinic-manager-drpan -> Project settings -> Service accounts.
+2. Generate a NEW private key JSON.
+3. In Vercel project family-dental-clinic -> Settings -> Environment Variables:
+   Name: CLINIC_MANAGER_FIREBASE_SERVICE_ACCOUNT_JSON
+   Value: paste the ENTIRE JSON contents as one value.
+   Environments: Production (Preview too if you test previews).
+4. Redeploy the website.
+
+SECURITY
+- Never put this JSON in NEXT_PUBLIC_*.
+- Never upload/commit the downloaded service-account JSON to GitHub.
+- If it is accidentally exposed, revoke/delete that key immediately in Google Cloud/Firebase.
+
+TEST
+1. Install/open Clinic Manager v3.3.7 once and allow notifications.
+2. Close Clinic Manager and lock the phone.
+3. Submit a NEW website appointment.
+4. A system FCM notification should arrive without opening Clinic Manager.
+5. Opening Clinic Manager should show the pending request, without treating old baseline requests as newly created.
+
+NOTE
+Android force-stop from Settings can suppress FCM until the app is opened again.
+The current phone's Android TTS voice is still not a guaranteed female voice; that is a separate audio/TTS issue.
